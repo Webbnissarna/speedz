@@ -210,7 +210,14 @@ function SelectInput({
       >
         <option value={"default"}>{defaultText}</option>
         {options.map((option) => {
-          return <option key={option}>{option}</option>;
+          return (
+            <option
+              className="bg-lime-400 bg-gradient-to-l from-lime-400 to-lime-600 hover:bg-lime-400"
+              key={option}
+            >
+              {option}
+            </option>
+          );
         })}
       </select>
     </div>
