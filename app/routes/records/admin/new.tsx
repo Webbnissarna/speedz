@@ -33,7 +33,7 @@ export const action = async ({ request }: ActionArgs) => {
   const errors = {
     category:
       category && category !== "default" ? null : `Category is required`,
-    title: title ? null : `Title is required`,
+    title: title && title.length > 0 ? null : `Title is required`,
     user: user ? null : `User not found`,
     time:
       hours === "0" && minutes === "0" && seconds === "0"
@@ -49,9 +49,18 @@ export const action = async ({ request }: ActionArgs) => {
 
   invariant(typeof category === "string", `Category must be a string`);
   invariant(typeof title === "string", `Title must be a string`);
-  invariant(typeof hours === "string", `Hours must be a string`);
-  invariant(typeof minutes === "string", `Minutes must be a string`);
-  invariant(typeof seconds === "string", `Seconds must be a string`);
+  invariant(
+    typeof hours === "string" && typeof parseInt(hours) === "number",
+    `Hours must be a string`
+  );
+  invariant(
+    typeof minutes === "string" && typeof parseInt(minutes) === "number",
+    `Minutes must be a string`
+  );
+  invariant(
+    typeof seconds === "string" && typeof parseInt(seconds) === "number",
+    `Seconds must be a string`
+  );
 
   const time = `${hours}:${minutes.padStart(2, "0")}:${seconds.padStart(
     2,
@@ -95,7 +104,8 @@ export default function NewRecord() {
     "1 player one lane",
   ];
   return (
-    <Form method="post">
+    <Form method="post" className="flex flex-col gap-4">
+      <h2 className="text-3xl font-bold">Add new record entry</h2>
       <SelectInput
         name="category"
         defaultText="Select a category"
@@ -191,47 +201,68 @@ function SelectInput({
   options: Array<string>;
 }) {
   return (
-    <p>
+    <div className="flex flex-col gap-1 rounded-md bg-gradient-to-l from-lime-400 to-lime-600 p-2 text-white focus-within:from-lime-600 focus-within:to-lime-400 focus-within:text-black">
       <label className="capitalize">{name}</label>
       {error ? <em className="text-red-600">{error}</em> : null}
-      <select name={name}>
+      <select
+        name={name}
+        className="border-b-2 border-b-lime-900 bg-transparent p-1"
+      >
         <option value={"default"}>{defaultText}</option>
         {options.map((option) => {
           return <option key={option}>{option}</option>;
         })}
       </select>
-    </p>
+    </div>
   );
 }
 
 function TextInput({ name }: { name: string }) {
   return (
-    <div className="relative flex flex-col gap-2 rounded-md bg-amber-100 p-2">
-      <label className="absolute top-2 left-2 font-bold capitalize text-amber-800">
+    <div className="relative flex flex-col gap-2 rounded-md bg-gradient-to-l from-lime-400 to-lime-600 p-2 text-white shadow-md focus-within:from-lime-600 focus-within:to-lime-400 focus-within:text-black">
+      <label className="absolute top-2 left-2 font-bold capitalize">
         {name}
       </label>
-      <input className="mt-6 bg-amber-100 text-amber-800" name={name} />
+      <input
+        className="mt-6 border-b-2 border-b-lime-900 bg-transparent p-1"
+        name={name}
+      />
     </div>
   );
 }
 
 function TimeInput({ error }: { error: string | null | undefined }) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col rounded-md bg-gradient-to-l from-lime-400 to-lime-600 p-2 text-white shadow-md focus-within:from-lime-600 focus-within:to-lime-400 focus-within:text-black">
       <span>Time</span>
-      <label className="flex gap-1">
-        <span>Hours</span>
-        <input min={0} max={24} defaultValue={0} type="number" name="hours" />
-      </label>
-      <label className="flex gap-1">
-        <span>Minutes</span>
-        <input min={0} max={59} defaultValue={0} type="number" name="minutes" />
-      </label>
-      <label className="flex gap-1">
-        <span>Seconds</span>
-        <input min={0} max={59} defaultValue={0} type="number" name="seconds" />
-      </label>
+      <TimeInputValue name={"hours"} max={24} />
+      <TimeInputValue name={"minutes"} max={59} />
+      <TimeInputValue name={"seconds"} max={59} />
       {error ? <span className="text-red-700">{error}</span> : null}
+    </div>
+  );
+}
+
+function TimeInputValue({
+  name,
+  max,
+}: {
+  name: "seconds" | "minutes" | "hours";
+  max: 24 | 59;
+}) {
+  return (
+    <div className="flex gap-2">
+      <label className="capitalize" htmlFor={name}>
+        {name}
+      </label>
+      <input
+        className="m-0 inline w-fit appearance-none bg-transparent"
+        min={0}
+        max={max}
+        defaultValue={0}
+        type="number"
+        name={name}
+      />
     </div>
   );
 }
