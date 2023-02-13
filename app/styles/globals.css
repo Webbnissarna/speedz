@@ -11,3 +11,9 @@
     -moz-appearance: textfield;
   }
 }
+
+@layer components {
+  .text-gradient {
+    @apply bg-transparent bg-gradient-to-br from-amber-400 to-amber-600 bg-clip-text text-transparent;
+  }
+}

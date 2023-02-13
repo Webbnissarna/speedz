@@ -8,6 +8,7 @@ import type { ActionArgs } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/server-runtime";
 import { useState } from "react";
 import invariant from "tiny-invariant";
+import SelectInput from "~/components/Form/SelectInput";
 
 import {
   createRecord,
@@ -105,7 +106,9 @@ export default function NewRecord() {
   ];
   return (
     <Form method="post" className="flex flex-col gap-4">
-      <h2 className="text-3xl font-bold">Add new record entry</h2>
+      <h2 className="text-gradient text-3xl font-bold">
+        Add a new record entry
+      </h2>
       <SelectInput
         name="category"
         defaultText="Select a category"
@@ -185,41 +188,6 @@ function AutofillTextInput({
         })}
       </ul>
       {error && <span>{error}</span>}
-    </div>
-  );
-}
-
-function SelectInput({
-  name,
-  defaultText,
-  error,
-  options,
-}: {
-  name: string;
-  defaultText: string;
-  error: string | null | undefined;
-  options: Array<string>;
-}) {
-  return (
-    <div className="flex flex-col gap-1 rounded-md bg-gradient-to-l from-lime-400 to-lime-600 p-2 text-white focus-within:from-lime-600 focus-within:to-lime-400 focus-within:text-black">
-      <label className="capitalize">{name}</label>
-      {error ? <em className="text-red-600">{error}</em> : null}
-      <select
-        name={name}
-        className="border-b-2 border-b-lime-900 bg-transparent p-1"
-      >
-        <option value={"default"}>{defaultText}</option>
-        {options.map((option) => {
-          return (
-            <option
-              className="bg-lime-400 bg-gradient-to-l from-lime-400 to-lime-600 hover:bg-lime-400"
-              key={option}
-            >
-              {option}
-            </option>
-          );
-        })}
-      </select>
     </div>
   );
 }

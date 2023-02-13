@@ -10,10 +10,10 @@ export const loader = async () => {
 export default function RecordAdmin() {
   return (
     <div className="h-full">
-      <h1 className="text-center text-5xl">Record admin</h1>
+      <h1 className="text-gradient text-center text-5xl">Record admin</h1>
       <div className="grid h-full grid-cols-3">
         <Navigation />
-        <main className="col-span-3 bg-gradient-to-l from-lime-600 to-lime-400 p-3 md:col-span-2">
+        <main className="col-span-3  p-3 md:col-span-2">
           <Outlet />
         </main>
       </div>
@@ -24,7 +24,7 @@ export default function RecordAdmin() {
 function Navigation() {
   const { records } = useLoaderData<typeof loader>();
   return (
-    <nav className="col-span-3 h-full bg-gradient-to-r from-lime-600 to-lime-400 p-3 md:col-span-1">
+    <nav className="col-span-3 h-full  p-3 md:col-span-1">
       <ul className="flex flex-col gap-2">
         <li>
           <RecordEntryLink relative="path" slug={".."} title="Back" />
@@ -53,7 +53,7 @@ function RecordEntryLink({
   return (
     <Link
       to={slug}
-      className="block w-full rounded-lg bg-gradient-to-l from-lime-600 to-lime-400 p-1 font-bold shadow-md hover:from-lime-400 hover:to-lime-600 hover:text-white hover:underline"
+      className="block w-full rounded-lg border-2 border-amber-600 p-1 font-bold text-amber-400 hover:border-amber-400 hover:bg-amber-100/20 hover:underline"
       relative={relative}
     >
       {title}
