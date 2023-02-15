@@ -1,31 +1,52 @@
-export default function SelectInput({
-  name,
-  defaultText,
-  error,
-  options,
-}: {
+import { useState } from "react";
+
+type SelectProps = {
   name: string;
   defaultText: string;
   error: string | null | undefined;
   options: Array<string>;
-}) {
+  setValue?: (values: Array<string>) => void;
+};
+
+export default function SelectInput({
+  options,
+  name,
+  defaultText,
+  error,
+}: SelectProps) {
+  const [isOpen, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<string>("");
   return (
-    <div className="flex flex-col gap-1 rounded-md">
-      <label className="capitalize text-amber-500">{name}</label>
-      {error ? <em className="text-red-600">{error}</em> : null}
-      <select
-        name={name}
-        className="border-b-2 border-b-amber-900 bg-transparent p-1"
+    <div>
+      <div
+        onClick={() => {
+          setOpen(!isOpen);
+        }}
       >
-        <option value={"default"}>{defaultText}</option>
-        {options.map((option) => {
-          return (
-            <option className="" key={option}>
-              {option}
-            </option>
-          );
-        })}
-      </select>
+        {selectedItem.length > 0 ? (
+          <input hidden name={name} readOnly value={selectedItem} />
+        ) : null}
+        <span>{selectedItem.length > 0 ? selectedItem : defaultText}</span>
+        <span>{isOpen ? "☝️" : "👇"}</span>
+      </div>
+      <ul>
+        {isOpen &&
+          options.map((option, idx) => {
+            return (
+              <li
+                key={`${option}${idx}`}
+                value={option}
+                onClick={() => {
+                  setSelectedItem(option);
+                  setOpen(false);
+                }}
+                className={`${option === selectedItem ? "font-bold" : ""}`}
+              >
+                {option}
+              </li>
+            );
+          })}
+      </ul>
     </div>
   );
 }

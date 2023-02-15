@@ -8,7 +8,8 @@ import type { ActionArgs } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/server-runtime";
 import { useState } from "react";
 import invariant from "tiny-invariant";
-import SelectInput from "~/components/Form/SelectInput";
+import ComboboxInput from "~/components/Form/Combobox";
+import ComboBoxMultipleInput from "~/components/Form/ComboboxMultiple";
 
 import {
   createRecord,
@@ -16,13 +17,10 @@ import {
   getNumberOfEntries,
 } from "~/models/records.server";
 import { getUsers } from "~/models/user.server";
-import { getUser } from "~/session.server";
 
 export const action = async ({ request }: ActionArgs) => {
   // TODO: remove me
   await new Promise((res) => setTimeout(res, 1000));
-  const user = await getUser(request);
-  invariant(user !== null, `User must be defined`);
 
   const formData = await request.formData();
   const category = formData.get("category");
@@ -31,17 +29,24 @@ export const action = async ({ request }: ActionArgs) => {
   const minutes = formData.get("minutes");
   const seconds = formData.get("seconds");
 
+  const heroes = formData.getAll("hero");
+  const users = formData.getAll("user");
+
   const errors = {
     category:
       category && category !== "default" ? null : `Category is required`,
     title: title && title.length > 0 ? null : `Title is required`,
-    user: user ? null : `User not found`,
+    users: users.length > 0 ? null : `Need at least one user selected`,
     time:
       hours === "0" && minutes === "0" && seconds === "0"
         ? "Time needs to be more than zero"
         : null,
-    heroes: null,
+    heroes: heroes.length > 0 ? null : "At least one hero need to be picked",
   };
+
+  console.log("category", category);
+  console.log("heroes", heroes);
+  console.log("users", users);
 
   const hasErrors = Object.values(errors).some((errorMessage) => errorMessage);
   if (hasErrors) {
@@ -78,8 +83,8 @@ export const action = async ({ request }: ActionArgs) => {
       time: time,
       title: title,
     },
-    [{ name: "Polly" }],
-    [user]
+    heroes.map((hero) => ({ name: hero.toString() })),
+    users.map((user) => ({ email: user.toString() }))
   );
   return redirect("/records/admin");
 };
@@ -104,30 +109,33 @@ export default function NewRecord() {
     "1 player all lanes",
     "1 player one lane",
   ];
+
   return (
     <Form method="post" className="flex flex-col gap-4">
       <h2 className="text-gradient text-3xl font-bold">
         Add a new record entry
       </h2>
-      <SelectInput
-        name="category"
-        defaultText="Select a category"
-        error={errors?.category}
+      <ComboboxInput
         options={categories}
+        defaultText={"Select a category"}
+        name={"category"}
       />
-      <AutofillTextInput
-        name={"heroes"}
-        placeholder="Select a hero"
-        error={errors?.heroes}
-        options={heroes.map((hero) => hero)}
-      />
-      <AutofillTextInput
-        name={"users"}
-        placeholder="Select a user"
-        error={errors?.heroes}
-        options={users.map((user) => user.email)}
-      />
+
       <TextInput name={"title"} />
+      <ComboBoxMultipleInput
+        options={heroes.map((hero) => hero)}
+        defaultText={"Pick heroes"}
+        name={"hero"}
+        placeholder={"Hero name"}
+        error={errors?.heroes}
+      />
+      <ComboBoxMultipleInput
+        options={users.map((user) => user.email)}
+        defaultText={"Pick users"}
+        name={"user"}
+        placeholder={"User email"}
+        error={errors?.users}
+      />
       <TimeInput error={errors?.time} />
       <button
         type="submit"
@@ -137,58 +145,6 @@ export default function NewRecord() {
         Add record attempt
       </button>
     </Form>
-  );
-}
-
-function AutofillTextInput({
-  name,
-  placeholder,
-  error,
-  options,
-}: {
-  name: string;
-  placeholder: string;
-  error: string | null | undefined;
-  options: Array<string>;
-}) {
-  const [chosenValues, setChosenValues] = useState<string[]>([]);
-  return (
-    <div>
-      <label htmlFor={name}>{name}</label>
-      <input
-        type="text"
-        name={name}
-        placeholder={placeholder}
-        onKeyDown={(e) => {
-          e.stopPropagation();
-          if (e.key === "enter") {
-            console.log("enter");
-          }
-        }}
-      />
-      <ul>
-        {options
-          .filter((option) => !chosenValues.includes(option))
-          .map((option) => {
-            return (
-              <li
-                key={option}
-                onClick={(e) => {
-                  setChosenValues([...chosenValues, option]);
-                }}
-              >
-                {option}
-              </li>
-            );
-          })}
-      </ul>
-      <ul>
-        {chosenValues.map((value) => {
-          return <li key={value}></li>;
-        })}
-      </ul>
-      {error && <span>{error}</span>}
-    </div>
   );
 }
 
