@@ -29,6 +29,7 @@ export default function MultipleComboBox({
   const [isOpen, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [selectedItems, setSelectedItems] = useState<Array<string>>([]);
+  const [highlightedItem, setHighlightedItem] = useState<number | null>(null);
   const items = useMemo(
     () => getFilteredOptions(selectedItems, inputValue),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,23 +84,60 @@ export default function MultipleComboBox({
               }}
               value={inputValue}
               onKeyDown={(e) => {
-                if (e.code === "Enter") {
-                  e.preventDefault();
-                  e.stopPropagation();
-
-                  if (e.currentTarget.value.length > 0) {
-                    setSelectedItems([...selectedItems, e.currentTarget.value]);
-                    setInputValue("");
-                  }
+                switch (e.code) {
+                  case "ArrowDown":
+                    e.preventDefault();
+                    if (highlightedItem !== null) {
+                      setHighlightedItem((highlightedItem + 1) % items.length);
+                    } else {
+                      setHighlightedItem(0);
+                    }
+                    break;
+                  case "ArrowUp":
+                    e.preventDefault();
+                    if (highlightedItem !== null) {
+                      if (highlightedItem === 0) {
+                        setHighlightedItem(null);
+                      } else {
+                        setHighlightedItem(
+                          (highlightedItem - 1) % items.length
+                        );
+                      }
+                    } else {
+                      setHighlightedItem(items.length - 1);
+                    }
+                    break;
+                  case "Enter":
+                    e.preventDefault();
+                    if (highlightedItem !== null) {
+                      setSelectedItems([
+                        ...selectedItems,
+                        items[highlightedItem],
+                      ]);
+                    }
+                    if (e.currentTarget.value.length > 0) {
+                      setSelectedItems([
+                        ...selectedItems,
+                        e.currentTarget.value,
+                      ]);
+                      setInputValue("");
+                    }
+                    break;
+                  default:
+                    break;
                 }
               }}
               onFocus={() => {
                 setOpen(true);
               }}
+              className="border border-r-0 border-amber-200 bg-transparent px-2"
             />
-            <button type="button" onClick={() => setOpen(!isOpen)}>
+            <span
+              onClick={() => setOpen(!isOpen)}
+              className="inline-block h-full cursor-pointer border border-l-0 border-amber-200"
+            >
               {isOpen ? "☝️" : "👇"}
-            </button>
+            </span>
           </div>
         </div>
       </div>
@@ -108,7 +146,9 @@ export default function MultipleComboBox({
           items.map((option, idx) => {
             return (
               <li
-                className="cursor-pointer hover:bg-slate-600"
+                className={`cursor-pointer hover:bg-slate-600 ${
+                  idx === highlightedItem ? "bg-slate-600" : ""
+                }`}
                 key={`${option}${idx}`}
                 onClick={() => {
                   setSelectedItems([...selectedItems, option]);

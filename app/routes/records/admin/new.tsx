@@ -111,17 +111,17 @@ export default function NewRecord() {
   ];
 
   return (
-    <Form method="post" className="flex flex-col gap-4">
+    <Form method="post" className="flex max-w-md flex-col gap-4">
       <h2 className="text-gradient text-3xl font-bold">
         Add a new record entry
       </h2>
       <ComboboxInput
         options={categories}
-        defaultText={"Select a category"}
+        defaultText={"Search for a category"}
         name={"category"}
       />
 
-      <TextInput name={"title"} />
+      <TextInput name={"title"} placeholder="A unique title 📝" />
       <ComboBoxMultipleInput
         options={heroes.map((hero) => hero)}
         defaultText={"Pick heroes"}
@@ -148,15 +148,22 @@ export default function NewRecord() {
   );
 }
 
-function TextInput({ name }: { name: string }) {
+function TextInput({
+  name,
+  placeholder,
+}: {
+  name: string;
+  placeholder: string;
+}) {
   return (
-    <div className="relative flex flex-col gap-2 rounded-md bg-gradient-to-l from-lime-400 to-lime-600 p-2 text-white shadow-md focus-within:from-lime-600 focus-within:to-lime-400 focus-within:text-black">
+    <div className="relative flex w-fit flex-col gap-2  rounded-md p-2 text-white shadow-md">
       <label className="absolute top-2 left-2 font-bold capitalize">
         {name}
       </label>
       <input
-        className="mt-6 border-b-2 border-b-lime-900 bg-transparent p-1"
+        className="mt-6 border-b-2 border-b-amber-200 bg-transparent p-1"
         name={name}
+        placeholder={placeholder}
       />
     </div>
   );
@@ -164,11 +171,15 @@ function TextInput({ name }: { name: string }) {
 
 function TimeInput({ error }: { error: string | null | undefined }) {
   return (
-    <div className="flex flex-col rounded-md bg-gradient-to-l from-lime-400 to-lime-600 p-2 text-white shadow-md focus-within:from-lime-600 focus-within:to-lime-400 focus-within:text-black">
-      <span>Time</span>
-      <TimeInputValue name={"hours"} max={24} />
-      <TimeInputValue name={"minutes"} max={59} />
-      <TimeInputValue name={"seconds"} max={59} />
+    <div className="flex w-fit flex-col rounded-md border border-amber-200 p-2">
+      <span className="cursor-default">Time</span>
+      <div className="flex gap-2">
+        <TimeInputValue name={"hours"} max={24} />
+        <span className="text-5xl">:</span>
+        <TimeInputValue name={"minutes"} max={59} />
+        <span className="text-5xl">:</span>
+        <TimeInputValue name={"seconds"} max={59} />
+      </div>
       {error ? <span className="text-red-700">{error}</span> : null}
     </div>
   );
@@ -181,19 +192,43 @@ function TimeInputValue({
   name: "seconds" | "minutes" | "hours";
   max: 24 | 59;
 }) {
+  const [value, setValue] = useState(0);
   return (
     <div className="flex gap-2">
-      <label className="capitalize" htmlFor={name}>
+      <label className="capitalize" htmlFor={name} hidden>
         {name}
       </label>
       <input
-        className="m-0 inline w-fit appearance-none bg-transparent"
         min={0}
         max={max}
-        defaultValue={0}
         type="number"
         name={name}
+        hidden
+        value={value}
+        readOnly
       />
+      <span
+        className="cursor-default text-5xl"
+        onKeyDown={(e) => {
+          switch (e.code) {
+            case "ArrowDown":
+              if (value > 0) {
+                setValue(value - 1);
+              }
+              break;
+            case "ArrowUp":
+              if (value < max) {
+                setValue(value + 1);
+              }
+              break;
+            default:
+              break;
+          }
+        }}
+        tabIndex={0}
+      >
+        {value}
+      </span>
     </div>
   );
 }

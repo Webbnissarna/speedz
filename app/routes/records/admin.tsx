@@ -9,9 +9,9 @@ export const loader = async () => {
 
 export default function RecordAdmin() {
   return (
-    <div className="h-full">
+    <div className="">
       <h1 className="text-gradient text-center text-5xl">Record admin</h1>
-      <div className="grid h-full grid-cols-3">
+      <div className="grid grid-cols-3">
         <Navigation />
         <main className="col-span-3  p-3 md:col-span-2">
           <Outlet />
@@ -24,7 +24,7 @@ export default function RecordAdmin() {
 function Navigation() {
   const { records } = useLoaderData<typeof loader>();
   return (
-    <nav className="col-span-3 h-full  p-3 md:col-span-1">
+    <nav className="col-span-3  p-3 md:col-span-1">
       <ul className="flex flex-col gap-2">
         <li>
           <RecordEntryLink relative="path" slug={".."} title="Back" />
