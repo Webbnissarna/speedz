@@ -86,13 +86,12 @@ export default function ComboboxInput({
             onFocus={() => setOpen(true)}
             onBlur={() => {
               setHighlightedItem(null);
-              setOpen(false);
             }}
             className="border border-r-0 border-amber-200 bg-transparent px-2"
           />
           <span
             onClick={() => {
-              setOpen(!isOpen);
+              setOpen((prev) => !prev);
             }}
             className="right-2 inline-block cursor-pointer border border-l-0 border-amber-200 pr-2"
           >
@@ -109,8 +108,12 @@ export default function ComboboxInput({
                 className={`cursor-pointer ${
                   idx === highlightedItem ? "bg-slate-600" : ""
                 }`}
+                onMouseEnter={() => {
+                  setHighlightedItem(idx);
+                }}
                 onClick={() => {
                   setSelectedItem(option);
+                  setOpen(false);
                 }}
               >
                 {option}

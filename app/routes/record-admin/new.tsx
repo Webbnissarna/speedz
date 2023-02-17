@@ -8,8 +8,8 @@ import type { ActionArgs } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/server-runtime";
 import { useState } from "react";
 import invariant from "tiny-invariant";
-import ComboboxInput from "~/components/Form/Combobox";
-import ComboBoxMultipleInput from "~/components/Form/ComboboxMultiple";
+import ComboboxInput from "~/components/form/Combobox";
+import ComboBoxMultipleInput from "~/components/form/ComboboxMultiple";
 
 import {
   createRecord,
@@ -78,7 +78,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   await createRecord(
     {
-      category: category,
+      categoryName: category,
       slug: slug,
       time: time,
       title: title,

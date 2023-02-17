@@ -1,20 +1,20 @@
 import { prisma } from "~/db.server";
-import type { Record, HoNHeroes, User } from "@prisma/client";
+import type { Record, HoNHero, User } from "@prisma/client";
 
 export async function getRecords() {
-  return prisma.record.findMany();
+  return prisma.record.findMany({ include: { category: true } });
 }
 
 export async function getRecord(slug: string) {
   return prisma.record.findUnique({
     where: { slug },
-    include: { heroes: true, users: true },
+    include: { heroes: true, users: true, category: true },
   });
 }
 
 export async function createRecord(
   record: Record,
-  heroes: Array<HoNHeroes>,
+  heroes: Array<HoNHero>,
   users: Array<Pick<User, "email">>
 ) {
   return prisma.record.create({
@@ -40,7 +40,7 @@ export async function createRecord(
 }
 
 export async function getCategoriesForGame() {
-  const records = await prisma.record.findMany();
+  const records = await prisma.record.findMany({ include: { category: true } });
   const categories = Array.from(
     new Set(records.map((record) => record.category))
   );

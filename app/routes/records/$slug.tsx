@@ -13,10 +13,5 @@ export const loader = async ({ params }: LoaderArgs) => {
 
 export default function RecordSlug() {
   const { record } = useLoaderData<typeof loader>();
-  return (
-    <main>
-      <h1>Some Record for category {record?.category}</h1>
-      <span>Time {record.time}</span>
-    </main>
-  );
+  return <div>{record.title}</div>;
 }
