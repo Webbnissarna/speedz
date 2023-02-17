@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { SVGProps } from "react";
-const SvgX = (props: SVGProps<SVGSVGElement>) => (
+const SvgAdd = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={24}
@@ -11,10 +11,11 @@ const SvgX = (props: SVGProps<SVGSVGElement>) => (
     strokeWidth={2}
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="feather feather-x"
+    className="feather feather-plus-square"
     {...props}
   >
-    <path d="M18 6 6 18M6 6l12 12" />
+    <rect x={3} y={3} width={18} height={18} rx={2} ry={2} />
+    <path d="M12 8v8M8 12h8" />
   </svg>
 );
-export default SvgX;
+export default SvgAdd;
