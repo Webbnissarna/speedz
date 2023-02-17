@@ -7,29 +7,35 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Record {
-  title    String
-  category String
-  slug     String      @id
-  heroes   HoNHeroes[]
-  time     String
-  users    User[]
+model Category {
+  name   String   @id
+  record Record[]
 }
 
-model HoNHeroes {
+model Record {
+  title        String
+  category     Category  @relation(fields: [categoryName], references: [name])
+  slug         String    @id
+  heroes       HoNHero[]
+  time         String
+  users        User[]
+  categoryName String
+}
+
+model HoNHero {
   name    String   @id
   Records Record[]
 }
 
 model User {
-  id    String @id @default(cuid())
-  email String @unique
+  id    String  @id @default(cuid())
+  email String  @unique
+  name  String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   password Password?
-  notes    Note[]
   records  Record[]
 }
 
@@ -38,16 +44,4 @@ model Password {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
-}
-
-model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
 }

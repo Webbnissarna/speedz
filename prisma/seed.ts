@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "test@testson@mail.mail";
+  const email = "test@testson.mail";
 
   // cleanup the existing database
   await prisma.user.delete({ where: { email } }).catch(() => {
@@ -30,19 +30,31 @@ async function seed() {
     "1pol": "1 player one lane",
   };
 
+  for (const category of Object.values(categories)) {
+    await prisma.category.upsert({
+      where: { name: category },
+      create: {
+        name: category,
+      },
+      update: {
+        name: category,
+      },
+    });
+  }
+
   const records = [
     {
       title: "Flinty boi does it",
-      category: categories["1pal"],
-      heroes: [{ name: "Flint" }],
+      category: { name: categories["1pal"] },
+      heroes: [{ name: "Flint Beastwood" }],
       time: "1:33:07",
       slug: "hon-1",
       users: [user.id],
     },
     {
       title: "Flinty boi does it",
-      category: categories["1pol"],
-      heroes: [{ name: "Bomb" }],
+      category: { name: categories["1pol"] },
+      heroes: [{ name: "Bombardier" }],
       time: "1:33:07",
       slug: "hon-2",
       user: [user.id],
@@ -54,7 +66,9 @@ async function seed() {
       where: { slug: record.slug },
       update: {
         title: record.title,
-        category: record.category,
+        category: {
+          connect: record.category,
+        },
         slug: record.slug,
         time: record.time,
         users: {
@@ -71,7 +85,9 @@ async function seed() {
       },
       create: {
         title: record.title,
-        category: record.category,
+        category: {
+          connect: record.category,
+        },
         slug: record.slug,
         time: record.time,
         users: {
