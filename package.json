@@ -3,6 +3,7 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
+    "build-icons": "npx @svgr/cli --out-dir app/components/icons/ -- app/components/icons/raw",
     "build": "run-s build:*",
     "build:css": "npm run generate:css -- --minify",
     "build:remix": "remix build",
@@ -45,6 +46,10 @@
     "@faker-js/faker": "^7.6.0",
     "@remix-run/dev": "^1.12.0",
     "@remix-run/eslint-config": "^1.12.0",
+    "@svgr/cli": "^6.5.1",
+    "@svgr/plugin-jsx": "^6.5.1",
+    "@svgr/plugin-prettier": "^6.5.1",
+    "@svgr/plugin-svgo": "^6.5.1",
     "@testing-library/cypress": "^8.0.7",
     "@testing-library/dom": "^8.20.0",
     "@testing-library/jest-dom": "^5.16.5",
