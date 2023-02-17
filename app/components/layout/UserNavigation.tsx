@@ -9,11 +9,11 @@ export default function UserNavigation() {
       {user ? (
         <div className="flex gap-2">
           <Form action="/logout" method="post">
-            <button type="submit" className="">
+            <button type="submit" className="hover:text-amber-200">
               <LogOut />
             </button>
           </Form>
-          <Link className="" to="/account">
+          <Link className="hover:text-amber-200" to="/account">
             <User />
           </Link>
         </div>
