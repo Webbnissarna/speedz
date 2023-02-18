@@ -17,19 +17,27 @@ export default function RecordSlug() {
   const { record } = useLoaderData<typeof loader>();
   return (
     <div className="flex flex-col gap-5">
-      <h2>{record.title}</h2>
+      <h2 className="h2">{record.title}</h2>
+      <p>Hero{record.heroes.length > 1 ? "es" : ""} used:</p>
       <div className="flex gap-3">
         {record.heroes.map((hero) => {
           return <HeroPortrait key={hero.name} hero={hero} />;
         })}
       </div>
+      <p>Played by player{record.users.length > 1 ? "s" : ""}</p>
       <div>
         {record.users.map((user) => {
           return <UserPortrait key={user.email} user={user} />;
         })}
       </div>
-      <span>{record.category.name}</span>
-      <span>{record.time}</span>
+      <div>
+        <p>Category played:</p>
+        <span>{record.category.name}</span>
+      </div>
+      <div>
+        <p>Time achieved:</p>
+        <span>{record.time}</span>
+      </div>
     </div>
   );
 }
@@ -57,7 +65,9 @@ function UserPortrait({ user }: { user: Pick<User, "email" | "name"> }) {
   return (
     <Portrait>
       <img alt={user.email} />
-      <h3>{user.name ? user.name : user.email}</h3>
+      <h3 className="truncate text-lg font-bold" title={user.email}>
+        {user.name ? user.name : user.email}
+      </h3>
     </Portrait>
   );
 }

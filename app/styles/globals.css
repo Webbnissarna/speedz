@@ -19,4 +19,7 @@
   .text-gradient-error {
     @apply bg-transparent bg-gradient-to-br from-red-600 to-red-400 bg-clip-text text-transparent;
   }
+  .h2 {
+    @apply text-gradient text-3xl;
+  }
 }
