@@ -9,7 +9,11 @@ export default function UserNavigation() {
       {user ? (
         <div className="flex gap-2">
           <Form action="/logout" method="post" tabIndex={-1}>
-            <button type="submit" className="hover:text-amber-200">
+            <button
+              name="logout"
+              type="submit"
+              className="hover:text-amber-200"
+            >
               <LogOut />
             </button>
           </Form>
