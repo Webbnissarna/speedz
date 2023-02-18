@@ -42,6 +42,20 @@ export async function updateUser(user: User) {
   return errors;
 }
 
+export async function getUsersByEmail(emails: Array<string>) {
+  const userPromises = emails.map(async (email) => {
+    return await prisma.user.findUnique({ where: { email: email } });
+  });
+
+  try {
+    const users = await Promise.all(userPromises);
+    return users.filter((user): user is User => user !== null);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 export async function getUsers() {
   return prisma.user.findMany();
 }

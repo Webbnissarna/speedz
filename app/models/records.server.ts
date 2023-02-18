@@ -15,13 +15,29 @@ export async function getRecord(slug: string) {
 export async function createRecord(
   record: Record,
   heroes: Array<HoNHero>,
-  users: Array<Pick<User, "email">>
+  users: Array<User>
 ) {
   return prisma.record.create({
     data: {
-      ...record,
+      slug: record.slug,
+      time: record.time,
+      title: record.title,
+      category: {
+        connectOrCreate: {
+          create: {
+            name: record.categoryName,
+          },
+          where: {
+            name: record.categoryName,
+          },
+        },
+      },
       users: {
-        connect: users.map((user) => ({ email: user.email })),
+        connect: users.map((user) => {
+          return {
+            id: user.id,
+          };
+        }),
       },
       heroes: {
         connectOrCreate: heroes.map((hero) => {
@@ -35,6 +51,10 @@ export async function createRecord(
           };
         }),
       },
+    },
+
+    include: {
+      category: true,
     },
   });
 }

@@ -17,7 +17,7 @@ import {
   getHeroes,
   getNumberOfEntries,
 } from "~/models/records.server";
-import { getUsers } from "~/models/user.server";
+import { getUsers, getUsersByEmail } from "~/models/user.server";
 
 export const action = async ({ request }: ActionArgs) => {
   // TODO: remove me
@@ -31,13 +31,17 @@ export const action = async ({ request }: ActionArgs) => {
   const seconds = formData.get("seconds");
 
   const heroes = formData.getAll("hero");
-  const users = formData.getAll("user");
+  const emails = formData.getAll("user");
+  const users = await getUsersByEmail(emails.map((email) => email.toString()));
 
   const errors = {
     category:
       category && category !== "default" ? null : `Category is required`,
     title: title && title.length > 0 ? null : `Title is required`,
-    users: users.length > 0 ? null : `Need at least one user selected`,
+    users:
+      users && users.length > 0
+        ? null
+        : `Error connecting users, try with different users`,
     time:
       hours === "0" && minutes === "0" && seconds === "0"
         ? "Time needs to be more than zero"
@@ -64,6 +68,7 @@ export const action = async ({ request }: ActionArgs) => {
     typeof seconds === "string" && typeof parseInt(seconds) === "number",
     `Seconds must be a string`
   );
+  invariant(users !== null, "Users did not fetch correctly");
 
   const time = `${hours}:${minutes.padStart(2, "0")}:${seconds.padStart(
     2,
@@ -71,6 +76,7 @@ export const action = async ({ request }: ActionArgs) => {
   )}`;
 
   const index = await getNumberOfEntries();
+  console.log("index", index);
   const slug = `hon-${index + 1}`;
 
   await createRecord(
@@ -81,7 +87,7 @@ export const action = async ({ request }: ActionArgs) => {
       title: title,
     },
     heroes.map((hero) => ({ name: hero.toString() })),
-    users.map((user) => ({ email: user.toString() }))
+    users
   );
   return redirect("/records");
 };
