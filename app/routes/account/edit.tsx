@@ -8,9 +8,9 @@ import { json } from "@remix-run/server-runtime";
 import type { ActionArgs } from "@remix-run/server-runtime";
 import React from "react";
 import { getUser } from "~/session.server";
-import TextInput from "../../components/form/TextInput";
+import TextInput from "~/components/forms/TextInput";
 import { updateUser } from "~/models/user.server";
-import SubmitButton from "../../components/form/SubmitButton";
+import SubmitButton from "~/components/forms/SubmitButton";
 
 export const loader = async ({ request }: ActionArgs) => {
   const user = await getUser(request);

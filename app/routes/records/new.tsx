@@ -8,9 +8,9 @@ import type { ActionArgs } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/server-runtime";
 import { useState } from "react";
 import invariant from "tiny-invariant";
-import ComboboxInput from "~/components/form/Combobox";
-import ComboBoxMultipleInput from "~/components/form/ComboboxMultiple";
-import TextInput from "~/components/form/TextInput";
+import ComboboxInput from "~/components/forms/Combobox";
+import ComboBoxMultipleInput from "~/components/forms/ComboboxMultiple";
+import TextInput from "~/components/forms/TextInput";
 
 import {
   createRecord,
