@@ -1,4 +1,4 @@
-app = "speedz-4387"
+app = "speedz"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = [ ]
