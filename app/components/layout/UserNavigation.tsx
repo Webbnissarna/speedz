@@ -8,7 +8,7 @@ export default function UserNavigation() {
     <nav className="flex w-full justify-end p-4" aria-label="user navigation">
       {user ? (
         <div className="flex gap-2">
-          <Form action="/logout" method="post">
+          <Form action="/logout" method="post" tabIndex={-1}>
             <button type="submit" className="hover:text-amber-200">
               <LogOut />
             </button>

@@ -10,6 +10,7 @@ import { useState } from "react";
 import invariant from "tiny-invariant";
 import ComboboxInput from "~/components/form/Combobox";
 import ComboBoxMultipleInput from "~/components/form/ComboboxMultiple";
+import TextInput from "~/components/form/TextInput";
 
 import {
   createRecord,
@@ -43,10 +44,6 @@ export const action = async ({ request }: ActionArgs) => {
         : null,
     heroes: heroes.length > 0 ? null : "At least one hero need to be picked",
   };
-
-  console.log("category", category);
-  console.log("heroes", heroes);
-  console.log("users", users);
 
   const hasErrors = Object.values(errors).some((errorMessage) => errorMessage);
   if (hasErrors) {
@@ -86,7 +83,7 @@ export const action = async ({ request }: ActionArgs) => {
     heroes.map((hero) => ({ name: hero.toString() })),
     users.map((user) => ({ email: user.toString() }))
   );
-  return redirect("/records/admin");
+  return redirect("/records");
 };
 
 export const loader = async () => {
@@ -145,27 +142,6 @@ export default function NewRecord() {
         Add record attempt
       </button>
     </Form>
-  );
-}
-
-function TextInput({
-  name,
-  placeholder,
-}: {
-  name: string;
-  placeholder: string;
-}) {
-  return (
-    <div className="relative flex w-fit flex-col gap-2  rounded-md p-2 text-white shadow-md">
-      <label className="absolute top-2 left-2 font-bold capitalize">
-        {name}
-      </label>
-      <input
-        className="mt-6 border-b-2 border-b-amber-200 bg-transparent p-1"
-        name={name}
-        placeholder={placeholder}
-      />
-    </div>
   );
 }
 
