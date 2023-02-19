@@ -1,11 +1,15 @@
-import { Form, Link } from "@remix-run/react";
+import { Form, Link as RemixLink } from "@remix-run/react";
 import { useOptionalUser } from "~/utils";
 import { LogOut, User } from "../icons";
+import Link from "../Link";
 
 export default function UserNavigation() {
   const user = useOptionalUser();
   return (
-    <nav className="flex w-full justify-end p-4" aria-label="user navigation">
+    <nav
+      className="col-span-3 flex w-full justify-end py-2 md:col-span-1 md:p-4"
+      aria-label="user navigation"
+    >
       {user ? (
         <div className="flex gap-2">
           <Form action="/logout" method="post" tabIndex={-1}>
@@ -17,24 +21,18 @@ export default function UserNavigation() {
               <LogOut />
             </button>
           </Form>
-          <Link className="hover:text-amber-200" to="/account">
+          <RemixLink to="/account">
             <User />
-          </Link>
+          </RemixLink>
         </div>
       ) : (
-        <div className="flex gap-4">
-          <Link
-            to="/join"
-            className="border border-amber-200 p-2 hover:border-amber-50 hover:bg-gradient-to-br hover:from-amber-200/50 hover:to-transparent"
-          >
-            Sign up
-          </Link>
-          <Link
-            to="/login"
-            className="border border-amber-200 p-2 hover:border-amber-50 hover:bg-gradient-to-bl hover:from-amber-200/50 hover:to-transparent"
-          >
-            Log In
-          </Link>
+        <div className="grid w-full grid-cols-2 gap-1 md:gap-4">
+          <div className="col-span-1">
+            <Link to="/join">Sign up</Link>
+          </div>
+          <div>
+            <Link to="/login">Log In</Link>
+          </div>
         </div>
       )}
     </nav>

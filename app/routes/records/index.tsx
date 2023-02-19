@@ -15,6 +15,11 @@ export default function Index() {
       </div>
     );
   } else {
-    return <p>Log in to add new records</p>;
+    return (
+      <div>
+        <p>View records from the list.</p>
+        <p>Log in to add new records.</p>
+      </div>
+    );
   }
 }

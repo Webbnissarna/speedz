@@ -11,9 +11,9 @@ type LayoutProps = {
 
 export function Layout({ children, header }: LayoutProps) {
   return (
-    <div>
+    <div className="p-2 md:p-0">
       <div className="grid grid-cols-3">
-        <h1 className="text-gradient col-span-1 col-start-2 flex justify-center text-5xl">
+        <h1 className="text-gradient col-span-3 flex justify-center text-5xl md:col-span-1 md:col-start-2">
           {header}
         </h1>
         <UserNavigation />
