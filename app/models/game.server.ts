@@ -2,7 +2,7 @@ import { prisma } from "~/db.server";
 
 export async function getGame(name: string) {
   return prisma.game.findUnique({
-    where: { name: name },
+    where: { name: name.toLowerCase() },
     include: { categories: true },
   });
 }
@@ -15,5 +15,5 @@ export async function createGame(name: string) {
   if (gameExists) {
     return null;
   }
-  return prisma.game.create({ data: { name: name } });
+  return prisma.game.create({ data: { name: name.toLowerCase() } });
 }

@@ -1,3 +1,4 @@
+import type { Category } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { createCategory } from "~/models/category.server";
@@ -30,14 +31,18 @@ async function seed() {
 
   await createGame("Heroes of Newerth");
 
-  const categories = {
-    "2pal": "2 player all lanes",
-    "1pal": "1 player all lanes",
-    "1pol": "1 player one lane",
-  };
+  const categoryNames = [
+    "2 player all lanes",
+    "1 player all lanes",
+    "1 player one lane",
+  ];
 
-  for (const category of Object.values(categories)) {
-    await createCategory(category, "Heroes of Newerth");
+  let categories: Array<Category> = [];
+  for (const categoryName of categoryNames) {
+    const category = await createCategory(categoryName, "Heroes of Newerth");
+    if (category) {
+      categories.push(category);
+    }
   }
 
   const heroes = [
@@ -54,7 +59,7 @@ async function seed() {
   const runs = [
     {
       title: "Flinty boi does it",
-      category: { name: categories["1pal"] },
+      category: categories[1],
       heroes: [heroes[0]],
       time: "1:33:07",
       slug: "hon-1",
@@ -62,7 +67,7 @@ async function seed() {
     },
     {
       title: "Flinty boi does it",
-      category: { name: categories["1pol"] },
+      category: categories[2],
       heroes: [heroes[2]],
       time: "1:33:07",
       slug: "hon-2",
@@ -73,14 +78,15 @@ async function seed() {
   for (const run of runs) {
     await createHoNRun(
       {
-        gameName: "Heroes of Newerth",
+        gameName: "Heroes of Newerth".toLowerCase(),
         slug: run.slug,
         time: run.time,
         title: run.title,
         note: null,
       },
       run.heroes,
-      [user]
+      [user],
+      run.category.id
     );
   }
 

@@ -6,12 +6,14 @@ export default function MultipleComboBox({
   name,
   placeholder,
   error,
+  allowCreation = false,
 }: {
   options: Array<string>;
   defaultText: string;
   name: string;
   placeholder: string;
   error: string | null | undefined;
+  allowCreation?: boolean;
 }) {
   function getFilteredOptions(
     selectedItems: Array<string>,
@@ -115,7 +117,7 @@ export default function MultipleComboBox({
                         items[highlightedItem],
                       ]);
                     }
-                    if (e.currentTarget.value.length > 0) {
+                    if (allowCreation && e.currentTarget.value.length > 0) {
                       setSelectedItems([
                         ...selectedItems,
                         e.currentTarget.value,

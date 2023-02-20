@@ -18,30 +18,33 @@ model Category {
   name     String
   game     Game   @relation(fields: [gameName], references: [name])
   gameName String
+  run      Run[]
 }
 
 model Run {
-  id       String   @id @unique @default(cuid())
-  slug     String   @unique
-  title    String
-  time     String
-  note     String?
-  users    User[]
-  game     Game     @relation(fields: [gameName], references: [name])
-  HoNRun   HoNRun[]
-  gameName String
+  id         String   @id @unique @default(cuid())
+  slug       String   @unique
+  title      String
+  time       String
+  category   Category @relation(fields: [categoryId], references: [id])
+  note       String?
+  users      User[]
+  game       Game     @relation(fields: [gameName], references: [name])
+  HoNRun     HoNRun?
+  gameName   String
+  categoryId String
 }
 
 model HoNRun {
-  id      Int       @id @default(autoincrement())
-  HoNHero HoNHero[]
-  run     Run       @relation(fields: [runId], references: [id])
-  runId   String
+  id        Int       @id @default(autoincrement())
+  HoNHeroes HoNHero[]
+  run       Run       @relation(fields: [runId], references: [id])
+  runId     String    @unique
 }
 
 model HoNHero {
   name String   @id
-  Runs HoNRun[]
+  runs HoNRun[]
 }
 
 model User {
@@ -53,7 +56,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   password Password?
-  Runs     Run[]
+  runs     Run[]
 }
 
 model Password {

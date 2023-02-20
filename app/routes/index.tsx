@@ -5,7 +5,7 @@ export default function Index() {
   return (
     <Layout header="Speedz">
       <div>
-        <Link to={"/records"}>View record entries</Link>
+        <Link to={"/heroes-of-newerth"}>Heroes of Newerth</Link>
       </div>
     </Layout>
   );
