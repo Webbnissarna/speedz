@@ -1,7 +1,7 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { getRecord } from "~/models/records.server";
+import { getRecord } from "~/models/run.server";
 import invariant from "tiny-invariant";
 import type { HoNHero, User } from "@prisma/client";
 

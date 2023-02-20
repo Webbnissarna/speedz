@@ -1,6 +1,6 @@
 import { json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { getRecords } from "~/models/records.server";
+import { getRecords } from "~/models/run.server";
 import { Layout } from "~/components/layout";
 import { useOptionalUser } from "~/utils";
 import type { NavigationLink } from "~/components/layout/Navigation";

@@ -16,7 +16,7 @@ import {
   createRecord,
   getHeroes,
   getNumberOfEntries,
-} from "~/models/records.server";
+} from "~/models/run.server";
 import { getUsers, getUsersByEmail } from "~/models/user.server";
 
 export const action = async ({ request }: ActionArgs) => {

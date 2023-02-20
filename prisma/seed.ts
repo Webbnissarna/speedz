@@ -1,5 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { createCategory } from "~/models/category.server";
+import { createGame } from "~/models/game.server";
+import { createHero } from "~/models/honhero.server";
+import { createHoNRun } from "~/models/honrun.server";
 
 const prisma = new PrismaClient();
 
@@ -16,7 +20,6 @@ async function seed() {
   const user = await prisma.user.create({
     data: {
       email,
-      name: "skaparn",
       password: {
         create: {
           hash: hashedPassword,
@@ -25,6 +28,8 @@ async function seed() {
     },
   });
 
+  await createGame("Heroes of Newerth");
+
   const categories = {
     "2pal": "2 player all lanes",
     "1pal": "1 player all lanes",
@@ -32,22 +37,25 @@ async function seed() {
   };
 
   for (const category of Object.values(categories)) {
-    await prisma.category.upsert({
-      where: { name: category },
-      create: {
-        name: category,
-      },
-      update: {
-        name: category,
-      },
-    });
+    await createCategory(category, "Heroes of Newerth");
   }
 
-  const records = [
+  const heroes = [
+    { name: "Flint Beastwood" },
+    { name: "Bombardier" },
+    { name: "Balphagore" },
+    { name: "Keeper of the forest" },
+  ];
+
+  for (const hero of heroes) {
+    await createHero(hero);
+  }
+
+  const runs = [
     {
       title: "Flinty boi does it",
       category: { name: categories["1pal"] },
-      heroes: [{ name: "Flint Beastwood" }],
+      heroes: [heroes[0]],
       time: "1:33:07",
       slug: "hon-1",
       users: [user.id],
@@ -55,55 +63,25 @@ async function seed() {
     {
       title: "Flinty boi does it",
       category: { name: categories["1pol"] },
-      heroes: [{ name: "Bombardier" }],
+      heroes: [heroes[2]],
       time: "1:33:07",
       slug: "hon-2",
       user: [user.id],
     },
   ];
 
-  for (const record of records) {
-    await prisma.record.upsert({
-      where: { slug: record.slug },
-      update: {
-        title: record.title,
-        category: {
-          connect: record.category,
-        },
-        slug: record.slug,
-        time: record.time,
-        users: {
-          connect: { id: user.id },
-        },
-        heroes: {
-          connectOrCreate: record.heroes.map((hero) => {
-            return {
-              create: { name: hero.name },
-              where: { name: hero.name },
-            };
-          }),
-        },
+  for (const run of runs) {
+    await createHoNRun(
+      {
+        gameName: "Heroes of Newerth",
+        slug: run.slug,
+        time: run.time,
+        title: run.title,
+        note: null,
       },
-      create: {
-        title: record.title,
-        category: {
-          connect: record.category,
-        },
-        slug: record.slug,
-        time: record.time,
-        users: {
-          connect: { id: user.id },
-        },
-        heroes: {
-          connectOrCreate: record.heroes.map((hero) => {
-            return {
-              create: { name: hero.name },
-              where: { name: hero.name },
-            };
-          }),
-        },
-      },
-    });
+      run.heroes,
+      [user]
+    );
   }
 
   console.log(`Database has been seeded. 🌱`);

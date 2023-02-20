@@ -7,24 +7,41 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Category {
-  name   String   @id
-  record Record[]
+model Game {
+  name       String     @id
+  categories Category[]
+  runs       Run[]
 }
 
-model Record {
-  title        String
-  category     Category  @relation(fields: [categoryName], references: [name])
-  slug         String    @id
-  heroes       HoNHero[]
-  time         String
-  users        User[]
-  categoryName String
+model Category {
+  id       String @id @default(uuid())
+  name     String
+  game     Game   @relation(fields: [gameName], references: [name])
+  gameName String
+}
+
+model Run {
+  id       String   @id @unique @default(cuid())
+  slug     String   @unique
+  title    String
+  time     String
+  note     String?
+  users    User[]
+  game     Game     @relation(fields: [gameName], references: [name])
+  HoNRun   HoNRun[]
+  gameName String
+}
+
+model HoNRun {
+  id      Int       @id @default(autoincrement())
+  HoNHero HoNHero[]
+  run     Run       @relation(fields: [runId], references: [id])
+  runId   String
 }
 
 model HoNHero {
-  name    String   @id
-  Records Record[]
+  name String   @id
+  Runs HoNRun[]
 }
 
 model User {
@@ -36,7 +53,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   password Password?
-  records  Record[]
+  Runs     Run[]
 }
 
 model Password {
