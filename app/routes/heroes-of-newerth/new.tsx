@@ -11,12 +11,11 @@ import invariant from "tiny-invariant";
 import ComboboxInput from "~/components/forms/Combobox";
 import ComboBoxMultipleInput from "~/components/forms/ComboboxMultiple";
 import TextInput from "~/components/forms/TextInput";
+import { getCategory } from "~/models/category.server";
 
-import {
-  createRecord,
-  getHeroes,
-  getNumberOfEntries,
-} from "~/models/records.server";
+import { getHeroes } from "~/models/honhero.server";
+import { createHoNRun, getHoNRuns } from "~/models/honrun.server";
+
 import { getUsers, getUsersByEmail } from "~/models/user.server";
 
 export const action = async ({ request }: ActionArgs) => {
@@ -24,7 +23,7 @@ export const action = async ({ request }: ActionArgs) => {
   await new Promise((res) => setTimeout(res, 1000));
 
   const formData = await request.formData();
-  const category = formData.get("category");
+  const categoryName = formData.get("category");
   const title = formData.get("title");
   const hours = formData.get("hours");
   const minutes = formData.get("minutes");
@@ -35,8 +34,10 @@ export const action = async ({ request }: ActionArgs) => {
   const users = await getUsersByEmail(emails.map((email) => email.toString()));
 
   const errors = {
-    category:
-      category && category !== "default" ? null : `Category is required`,
+    categoryName:
+      categoryName && categoryName !== "default"
+        ? null
+        : `categoryName is required`,
     title: title && title.length > 0 ? null : `Title is required`,
     users:
       users && users.length > 0
@@ -54,7 +55,7 @@ export const action = async ({ request }: ActionArgs) => {
     return json(errors);
   }
 
-  invariant(typeof category === "string", `Category must be a string`);
+  invariant(typeof categoryName === "string", `categoryName must be a string`);
   invariant(typeof title === "string", `Title must be a string`);
   invariant(
     typeof hours === "string" && typeof parseInt(hours) === "number",
@@ -70,26 +71,31 @@ export const action = async ({ request }: ActionArgs) => {
   );
   invariant(users !== null, "Users did not fetch correctly");
 
+  const category = await getCategory(categoryName, "Heroes of Newerth");
+  invariant(category !== null, "Category id was null");
+
   const time = `${hours}:${minutes.padStart(2, "0")}:${seconds.padStart(
     2,
     "0"
   )}`;
 
-  const index = await getNumberOfEntries();
+  const index = (await getHoNRuns()).length;
   console.log("index", index);
   const slug = `hon-${index + 1}`;
 
-  await createRecord(
+  await createHoNRun(
     {
-      categoryName: category,
       slug: slug,
       time: time,
       title: title,
+      gameName: "heroes of newerth",
+      note: null,
     },
     heroes.map((hero) => ({ name: hero.toString() })),
-    users
+    users,
+    category.id
   );
-  return redirect("/records");
+  return redirect("/heroes-of-newerth");
 };
 
 export const loader = async () => {
@@ -126,7 +132,7 @@ export default function NewRecord() {
 
       <TextInput name={"title"} placeholder="A unique title 📝" />
       <ComboBoxMultipleInput
-        options={heroes.map((hero) => hero)}
+        options={heroes.map((hero) => hero.name)}
         defaultText={"Pick heroes"}
         name={"hero"}
         placeholder={"Hero name"}

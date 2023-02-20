@@ -1,17 +1,17 @@
-import { json } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { getRecords } from "~/models/records.server";
+import { json } from "@remix-run/server-runtime";
+import React from "react";
 import { Layout } from "~/components/layout";
-import { useOptionalUser } from "~/utils";
 import type { NavigationLink } from "~/components/layout/Navigation";
+import { getRunsForGame } from "~/models/run.server";
+
 export const loader = async () => {
   return json({
-    records: await getRecords(),
+    records: await getRunsForGame("Heroes of Newerth"),
   });
 };
 
-export default function Records() {
-  const user = useOptionalUser();
+export default function HoNIndex() {
   const { records } = useLoaderData<typeof loader>();
   const links: Array<NavigationLink> = [
     { href: "..", title: "Back", relative: "path" },
@@ -24,16 +24,8 @@ export default function Records() {
       return link;
     }),
   ];
-
-  //   if (user) {
-  //     links.splice(1, 0, {
-  //       href: "/record-admin",
-  //       title: "Admin",
-  //       relative: "route",
-  //     });
-  //   }
   return (
-    <Layout header="Records">
+    <Layout header="Runs">
       <Layout.Body>
         <Layout.Navigation links={links} />
         <Layout.Content>

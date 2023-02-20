@@ -1,42 +1,43 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { getRecord } from "~/models/records.server";
 import invariant from "tiny-invariant";
 import type { HoNHero, User } from "@prisma/client";
 
+import { getHoNRunBySlug } from "~/models/honrun.server";
+
 export const loader = async ({ params }: LoaderArgs) => {
   invariant(params.slug, `params.slug is required`);
-  const record = await getRecord(params.slug);
-  invariant(record, `Record not found ${params.slug}`);
+  const HoNRun = await getHoNRunBySlug(params.slug);
+  invariant(HoNRun, `Run not found ${params.slug}`);
 
-  return json({ record });
+  return json({ HoNRun });
 };
 
 export default function RecordSlug() {
-  const { record } = useLoaderData<typeof loader>();
+  const { HoNRun } = useLoaderData<typeof loader>();
   return (
     <div className="flex flex-col gap-5">
-      <h2 className="h2">{record.title}</h2>
-      <p>Hero{record.heroes.length > 1 ? "es" : ""} used:</p>
+      <h2 className="h2">{HoNRun.run.title}</h2>
+      <p>Hero{HoNRun.HoNHeroes.length > 1 ? "es" : ""} used:</p>
       <div className="flex gap-3">
-        {record.heroes.map((hero) => {
+        {HoNRun.HoNHeroes.map((hero) => {
           return <HeroPortrait key={hero.name} hero={hero} />;
         })}
       </div>
-      <p>Played by player{record.users.length > 1 ? "s" : ""}</p>
+      <p>Played by player{HoNRun.run.users.length > 1 ? "s" : ""}</p>
       <div>
-        {record.users.map((user) => {
+        {HoNRun.run.users.map((user) => {
           return <UserPortrait key={user.email} user={user} />;
         })}
       </div>
       <div>
         <p>Category played:</p>
-        <span>{record.category.name}</span>
+        <span>{HoNRun.run.category.name}</span>
       </div>
       <div>
         <p>Time achieved:</p>
-        <span>{record.time}</span>
+        <span>{HoNRun.run.time}</span>
       </div>
     </div>
   );
