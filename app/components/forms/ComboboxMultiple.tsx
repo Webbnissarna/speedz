@@ -134,7 +134,7 @@ export default function MultipleComboBox({
             />
             <span
               onClick={() => setOpen(!isOpen)}
-              className="inline-block h-full cursor-pointer border border-l-0 border-amber-200"
+              className="inline-block min-h-full cursor-pointer border border-l-0 border-amber-200"
             >
               {isOpen ? "☝️" : "👇"}
             </span>
