@@ -2,7 +2,6 @@ import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
-  Link,
   useActionData,
   useNavigation,
   useSearchParams,
@@ -16,6 +15,7 @@ import { safeRedirect, validateEmail } from "~/utils";
 import TextInput from "~/components/forms/TextInput";
 import SubmitButton from "~/components/forms/SubmitButton";
 import { Layout } from "~/components/layout";
+import Link from "~/components/Link";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -98,26 +98,25 @@ export default function Join() {
     <Layout header="Sign up" userNavigation={false}>
       <Layout.Content>
         <div className="flex w-full flex-col items-center justify-center">
-          <Form method="post" className="space-y-6">
-            <div>
-              <TextInput
-                name="email"
-                placeholder="email@email.com"
-                error={actionData?.errors?.email}
-                required
-                autoFocus
-              />
-            </div>
+          <Form
+            method="post"
+            className="flex flex-col justify-center space-y-6"
+          >
+            <TextInput
+              name="email"
+              placeholder="email@email.com"
+              error={actionData?.errors?.email}
+              required
+              autoFocus
+            />
 
-            <div>
-              <TextInput
-                name="Password"
-                type={"password"}
-                placeholder={"password"}
-                error={actionData?.errors?.password}
-                required
-              />
-            </div>
+            <TextInput
+              name="password"
+              type={"password"}
+              placeholder={"password"}
+              error={actionData?.errors?.password}
+              required
+            />
 
             <input type="hidden" name="redirectTo" value={redirectTo} />
             <SubmitButton state={state}>Create account</SubmitButton>
