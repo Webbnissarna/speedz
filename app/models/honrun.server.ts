@@ -48,6 +48,12 @@ export async function createHoNRun(
   users: Array<User>,
   categoryId: string
 ) {
+  const existingRun = await prisma.hoNRun.findFirst({
+    where: { run: { slug: run.slug } },
+  });
+  if (existingRun) {
+    return existingRun;
+  }
   return prisma.hoNRun.create({
     data: {
       run: {

@@ -18,7 +18,7 @@ export async function getCategoriesForGame(gameName: string) {
 export async function createCategory(categoryName: string, gameName: string) {
   const category = await getCategory(categoryName, gameName.toLowerCase());
   if (category) {
-    return null;
+    return category;
   }
   return prisma.category.create({
     data: {
