@@ -121,9 +121,7 @@ export default function NewRecord() {
 
   return (
     <Form method="post" className="flex max-w-md flex-col gap-4">
-      <h2 className="text-gradient text-3xl font-bold">
-        Add a new record entry
-      </h2>
+      <h2 className="typo-h2">Add a new record entry</h2>
       <ComboboxInput
         options={categories}
         defaultText={"Search for a category"}

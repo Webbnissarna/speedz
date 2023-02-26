@@ -12,6 +12,11 @@ module.exports = {
       animation: {
         gradient: "gradient 1s ease-in-out infinite",
       },
+      fontFamily: {
+        h1: "'Jost-SemiBold', sans-serif",
+        h2: "'Jost-Medium', sans-serif",
+        body: "'Jost-Regular', sans-serif",
+      },
     },
   },
   plugins: [],

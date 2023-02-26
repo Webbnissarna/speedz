@@ -123,7 +123,7 @@ export default function Join() {
 
             <div className="flex items-center justify-center">
               <div className="text-center text-sm text-gray-500">
-                Already have an account?{" "}
+                <span>Already have an account?</span>
                 <Link
                   className="text-gradient animate-gradient"
                   to={{

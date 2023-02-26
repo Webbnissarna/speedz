@@ -10,6 +10,19 @@
     margin: 0;
     -moz-appearance: textfield;
   }
+  span,
+  p {
+    @apply typo-body;
+  }
+  h1 {
+    @apply typo-h1;
+  }
+  h2 {
+    @apply typo-h2;
+  }
+  h3 {
+    @apply typo-h3;
+  }
 }
 
 @layer components {
@@ -19,7 +32,35 @@
   .text-gradient-error {
     @apply bg-transparent bg-gradient-to-br from-red-600 to-red-400 bg-clip-text text-transparent;
   }
-  .h2 {
-    @apply text-gradient text-3xl;
+  .typo-h1 {
+    @apply text-gradient font-h1 text-[2rem] leading-8 tracking-widest;
   }
+  .typo-h2 {
+    @apply text-gradient font-h2 text-2xl leading-8 tracking-widest;
+  }
+  .typo-h3 {
+    @apply text-gradient font-body text-xl leading-4 tracking-wider;
+  }
+  .typo-body {
+    @apply font-body text-lg leading-4 tracking-tighter text-amber-500;
+  }
+}
+
+@font-face {
+  font-family: "Jost-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/Jost-Regular.woff") format("woff2");
+}
+@font-face {
+  font-family: "Jost-Medium";
+  font-style: normal;
+  font-weight: 500;
+  src: url("/fonts/Jost-Medium.woff") format("woff2");
+}
+@font-face {
+  font-family: "Jost-SemiBold";
+  font-style: normal;
+  font-weight: 600;
+  src: url("/fonts/Jost-SemiBold.woff") format("woff2");
 }
