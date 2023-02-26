@@ -16,8 +16,8 @@ export function Layout({
   userNavigation = true,
 }: LayoutProps) {
   return (
-    <div className="p-2 md:p-0">
-      <div className="grid  grid-cols-3 items-center justify-center">
+    <div className="p-4 md:p-6">
+      <div className="grid grid-cols-3 items-center justify-center">
         <h1 className="text-gradient col-span-3 flex h-[4rem] animate-gradient justify-center text-5xl md:col-span-1 md:col-start-2">
           {header}
         </h1>
