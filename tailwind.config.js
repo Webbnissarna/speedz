@@ -13,9 +13,9 @@ module.exports = {
         gradient: "gradient 1s ease-in-out infinite",
       },
       fontFamily: {
-        h1: "'Jost-SemiBold', sans-serif",
-        h2: "'Jost-Medium', sans-serif",
-        body: "'Jost-Regular', sans-serif",
+        h1: "'Kodchasan-SemiBold', sans-serif",
+        h2: "'Kodchasan-Medium', sans-serif",
+        body: "'Kodchasan-Regular', sans-serif",
       },
     },
   },

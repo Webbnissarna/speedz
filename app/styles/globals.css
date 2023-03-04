@@ -11,6 +11,7 @@
     -moz-appearance: textfield;
   }
   span,
+  a,
   p {
     @apply typo-body;
   }
@@ -33,34 +34,37 @@
     @apply bg-transparent bg-gradient-to-br from-red-600 to-red-400 bg-clip-text text-transparent;
   }
   .typo-h1 {
-    @apply text-gradient font-h1 text-[2rem] leading-8 tracking-widest;
+    @apply text-gradient font-h1 text-[2rem] leading-[3rem] tracking-widest;
   }
   .typo-h2 {
-    @apply text-gradient font-h2 text-2xl leading-8 tracking-widest;
+    @apply text-gradient font-h2 text-2xl leading-[3rem] tracking-widest;
   }
   .typo-h3 {
-    @apply text-gradient font-body text-xl leading-4 tracking-wider;
+    @apply text-gradient font-body text-xl leading-8 tracking-wider;
   }
   .typo-body {
     @apply font-body text-lg leading-4 tracking-tighter text-amber-500;
   }
+  .typo-abbr {
+    @apply font-body text-xs leading-3 -tracking-widest text-amber-500;
+  }
 }
 
 @font-face {
-  font-family: "Jost-Regular";
+  font-family: "Kodchasan-Regular";
   font-style: normal;
   font-weight: 400;
-  src: url("/fonts/Jost-Regular.woff") format("woff2");
+  src: url("/fonts/Kodchasan-Regular.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Jost-Medium";
+  font-family: "Kodchasan-Medium";
   font-style: normal;
   font-weight: 500;
-  src: url("/fonts/Jost-Medium.woff") format("woff2");
+  src: url("/fonts/Kodchasan-Medium.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Jost-SemiBold";
+  font-family: "Kodchasan-SemiBold";
   font-style: normal;
   font-weight: 600;
-  src: url("/fonts/Jost-SemiBold.woff") format("woff2");
+  src: url("/fonts/Kodchasan-SemiBold.woff2") format("woff2");
 }
