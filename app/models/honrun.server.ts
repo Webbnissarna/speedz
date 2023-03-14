@@ -79,7 +79,10 @@ export async function createHoNRun(
         },
       },
       HoNHeroes: {
-        connect: heroes.map((hero) => ({ name: hero.name })),
+        connectOrCreate: heroes.map((hero) => ({
+          create: { name: hero.name },
+          where: { name: hero.name },
+        })),
       },
     },
   });

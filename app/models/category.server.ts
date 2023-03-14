@@ -15,7 +15,14 @@ export async function getCategoriesForGame(gameName: string) {
   });
 }
 
-export async function createCategory(categoryName: string, gameName: string) {
+export async function createCategory(
+  categoryName: string,
+  gameName: string,
+  numberOfPlayers: number
+) {
+  if (numberOfPlayers < 1) {
+    throw new Error("Too few players set in category");
+  }
   const category = await getCategory(categoryName, gameName.toLowerCase());
   if (category) {
     return category;
@@ -24,6 +31,7 @@ export async function createCategory(categoryName: string, gameName: string) {
     data: {
       gameName: gameName.toLowerCase(),
       name: categoryName,
+      nbrOfPlayers: numberOfPlayers,
     },
   });
 }

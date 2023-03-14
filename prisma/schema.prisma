@@ -14,11 +14,12 @@ model Game {
 }
 
 model Category {
-  id       String @id @default(uuid())
-  name     String
-  game     Game   @relation(fields: [gameName], references: [name])
-  gameName String
-  run      Run[]
+  id           String @id @default(uuid())
+  name         String
+  game         Game   @relation(fields: [gameName], references: [name])
+  gameName     String
+  run          Run[]
+  nbrOfPlayers Int
 }
 
 model Run {
