@@ -43,10 +43,10 @@
     @apply text-gradient font-body text-xl leading-8 tracking-wider;
   }
   .typo-body {
-    @apply font-body text-lg leading-4 tracking-tighter text-amber-500;
+    @apply font-body text-lg leading-6 tracking-tighter text-amber-500;
   }
   .typo-abbr {
-    @apply font-body text-xs leading-3 -tracking-widest text-amber-500;
+    @apply font-body text-xs leading-5 -tracking-widest text-amber-500;
   }
 }
 
