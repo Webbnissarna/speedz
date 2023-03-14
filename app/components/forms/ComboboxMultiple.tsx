@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-export default function MultipleComboBox({
+export default function ComboboxMultiple({
   options,
   defaultText,
   name,
@@ -37,6 +37,45 @@ export default function MultipleComboBox({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedItems, inputValue]
   );
+
+  function handleKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
+    console.log(e.code);
+    e.preventDefault();
+    switch (e.code) {
+      case "ArrowDown":
+        if (highlightedItem !== null) {
+          setHighlightedItem((highlightedItem + 1) % items.length);
+        } else {
+          setHighlightedItem(0);
+        }
+        break;
+      case "ArrowUp":
+        if (highlightedItem !== null) {
+          if (highlightedItem === 0) {
+            setHighlightedItem(null);
+          } else {
+            setHighlightedItem((highlightedItem - 1) % items.length);
+          }
+        } else {
+          setHighlightedItem(items.length - 1);
+        }
+        break;
+      case "Enter":
+        if (highlightedItem !== null) {
+          setSelectedItems([...selectedItems, items[highlightedItem]]);
+        }
+        if (allowCreation && e.currentTarget.value.length > 0) {
+          setSelectedItems([...selectedItems, e.currentTarget.value]);
+          setInputValue("");
+        }
+        break;
+      case "Escape":
+        setOpen(false);
+        break;
+      default:
+        break;
+    }
+  }
 
   return (
     <div>
@@ -85,50 +124,7 @@ export default function MultipleComboBox({
                 setInputValue(e.currentTarget.value);
               }}
               value={inputValue}
-              onKeyDown={(e) => {
-                switch (e.code) {
-                  case "ArrowDown":
-                    e.preventDefault();
-                    if (highlightedItem !== null) {
-                      setHighlightedItem((highlightedItem + 1) % items.length);
-                    } else {
-                      setHighlightedItem(0);
-                    }
-                    break;
-                  case "ArrowUp":
-                    e.preventDefault();
-                    if (highlightedItem !== null) {
-                      if (highlightedItem === 0) {
-                        setHighlightedItem(null);
-                      } else {
-                        setHighlightedItem(
-                          (highlightedItem - 1) % items.length
-                        );
-                      }
-                    } else {
-                      setHighlightedItem(items.length - 1);
-                    }
-                    break;
-                  case "Enter":
-                    e.preventDefault();
-                    if (highlightedItem !== null) {
-                      setSelectedItems([
-                        ...selectedItems,
-                        items[highlightedItem],
-                      ]);
-                    }
-                    if (allowCreation && e.currentTarget.value.length > 0) {
-                      setSelectedItems([
-                        ...selectedItems,
-                        e.currentTarget.value,
-                      ]);
-                      setInputValue("");
-                    }
-                    break;
-                  default:
-                    break;
-                }
-              }}
+              onKeyDown={handleKeyPress}
               onFocus={() => {
                 setOpen(true);
               }}

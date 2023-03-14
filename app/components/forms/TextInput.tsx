@@ -1,34 +1,39 @@
+import Label from "./Label";
+
 export default function TextInput({
-  name,
+  title,
   placeholder,
+  children,
   error,
-  required = false,
-  autoFocus = false,
+  required,
+  autoFocus,
   type = "text",
 }: {
-  name: string;
+  title: string;
+  placeholder: string;
+  children?: React.ReactNode;
+  error?: string | null;
   required?: boolean;
   autoFocus?: boolean;
-  placeholder: string;
-  error?: string | null;
-  type?: React.HTMLInputTypeAttribute;
+  type?: "text" | "password";
 }) {
   return (
-    <div className="relative flex w-full flex-col gap-2  rounded-md p-2 text-white shadow-md">
-      <label className="absolute top-2 left-2 font-bold capitalize">
-        {name}
-      </label>
+    <div className="w-full max-w-[350px]">
+      <Label title={title} />
       <input
-        className="mt-6 w-full border-b-2 border-b-amber-200 bg-transparent p-1"
-        name={name}
+        className="placeholder:typo-body w-full border border-amber-600 bg-transparent bg-gradient-to-r from-amber-400/25 to-amber-600/25 px-4 py-4 placeholder:text-amber-200/50"
+        placeholder={placeholder}
+        id={title}
+        name={title}
         required={required}
         aria-invalid={error ? true : undefined}
-        aria-describedby={`${name}-error`}
-        placeholder={placeholder}
+        aria-describedby={`${title}-error`}
         type={type}
         autoFocus={autoFocus}
-      />
-      <span className="text-gradient-error">{error ? error : ""}</span>
+      >
+        {children}
+      </input>
+      {error && <span className="text-red-600">{error}</span>}
     </div>
   );
 }

@@ -93,14 +93,14 @@ export default function LoginPage() {
       <div className="mx-auto w-full max-w-md px-8">
         <Form method="post" className="flex flex-col justify-center space-y-6">
           <TextInput
-            name="email"
+            title="email"
             placeholder="email@email.com"
             required
             autoFocus
             error={actionData?.errors?.email}
           />
           <TextInput
-            name="password"
+            title="password"
             placeholder="pass**rd"
             error={actionData?.errors?.password}
             type={"password"}

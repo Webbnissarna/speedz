@@ -51,10 +51,10 @@ export default function Edit() {
     <Form method="post">
       <TextInput
         error={errors?.name}
-        name="name"
+        title="name"
         placeholder={user.name ? user.name : "Set a name"}
       />
-      <TextInput error={errors?.email} name="email" placeholder={user.email} />
+      <TextInput error={errors?.email} title="email" placeholder={user.email} />
       <SubmitButton state={state}>Update</SubmitButton>
     </Form>
   );
