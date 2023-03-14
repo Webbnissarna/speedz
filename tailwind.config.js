@@ -17,6 +17,9 @@ module.exports = {
         h2: "'Kodchasan-Medium', sans-serif",
         body: "'Kodchasan-Regular', sans-serif",
       },
+      maxWidth: {
+        form: 350,
+      },
     },
   },
   plugins: [],
