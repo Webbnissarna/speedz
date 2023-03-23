@@ -34,7 +34,7 @@ export default function Index() {
         </div>
       ) : null}
       <h2 className="text-center">Runs</h2>
-      <ul>
+      <ul className="grid grid-cols-1 gap-2">
         {links.map((link) => {
           return (
             <li key={link.href}>

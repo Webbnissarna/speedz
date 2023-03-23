@@ -7,7 +7,6 @@ import {
 import type { ActionArgs } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/server-runtime";
 import { useState } from "react";
-import invariant from "tiny-invariant";
 import ComboboxInput from "~/components/forms/Combobox";
 import ComboboxMultiple from "~/components/forms/ComboboxMultiple";
 import TextInput from "~/components/forms/TextInput";
@@ -15,7 +14,7 @@ import { getCategoriesForGame } from "~/models/category.server";
 
 import { createHoNRun } from "~/models/honrun.server";
 
-import { getUsers, getUsersByEmail } from "~/models/user.server";
+import { getUsers } from "~/models/user.server";
 import { heroes } from "~/static-data/heroes";
 
 export const action = async ({ request }: ActionArgs) => {
@@ -57,6 +56,13 @@ export default function NewHoNRun() {
         defaultText="Category name"
         name="category"
         options={categories.map((category) => category.name) ?? []}
+      />
+      <ComboboxMultiple
+        defaultText="Hero name"
+        name="Heroes"
+        options={heroes.map((hero) => hero.name)}
+        placeholder=""
+        error={null}
       />
     </Form>
   );

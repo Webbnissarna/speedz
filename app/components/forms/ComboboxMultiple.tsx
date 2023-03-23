@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Label from "./Label";
 
 export default function ComboboxMultiple({
   options,
@@ -37,6 +38,7 @@ export default function ComboboxMultiple({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedItems, inputValue]
   );
+  const ref = useRef<HTMLUListElement | null>(null);
 
   function handleKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
     console.log(e.code);
@@ -63,10 +65,12 @@ export default function ComboboxMultiple({
       case "Enter":
         if (highlightedItem !== null) {
           setSelectedItems([...selectedItems, items[highlightedItem]]);
+          setOpen(false);
         }
         if (allowCreation && e.currentTarget.value.length > 0) {
           setSelectedItems([...selectedItems, e.currentTarget.value]);
           setInputValue("");
+          setOpen(false);
         }
         break;
       case "Escape":
@@ -77,10 +81,22 @@ export default function ComboboxMultiple({
     }
   }
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+
   return (
-    <div>
-      <div>
-        <label>{defaultText}</label>
+    <div className="relative w-full">
+      <div className="flex flex-col">
+        <Label title={name} />
         {selectedItems.map((item, idx) => {
           return (
             <input
@@ -117,7 +133,7 @@ export default function ComboboxMultiple({
               );
             })}
           </div>
-          <div>
+          <div className="flex w-full items-center justify-between border border-amber-600 bg-transparent bg-gradient-to-r from-amber-400/25 to-amber-600/25 py-4 px-4">
             <input
               placeholder={placeholder}
               onChange={(e) => {
@@ -128,20 +144,20 @@ export default function ComboboxMultiple({
               onFocus={() => {
                 setOpen(true);
               }}
-              className="border border-r-0 border-amber-200 bg-transparent px-2"
+              className="placeholder:typo-body bg-transparent placeholder:text-amber-200/50"
             />
-            <span
-              onClick={() => setOpen(!isOpen)}
-              className="inline-block min-h-full cursor-pointer border border-l-0 border-amber-200"
-            >
+            <span onClick={() => setOpen(!isOpen)} className="cursor-pointer">
               {isOpen ? "☝️" : "👇"}
             </span>
           </div>
         </div>
       </div>
-      <ul>
-        {isOpen &&
-          items.map((option, idx) => {
+      {isOpen ? (
+        <ul
+          ref={ref}
+          className="absolute top-[110%] left-0 right-0 max-h-28 overflow-y-scroll rounded-lg bg-amber-100/25 p-2"
+        >
+          {items.map((option, idx) => {
             return (
               <li
                 className={`cursor-pointer hover:bg-slate-600 ${
@@ -156,7 +172,8 @@ export default function ComboboxMultiple({
               </li>
             );
           })}
-      </ul>
+        </ul>
+      ) : null}
       {error && <span className="font-bold text-red-600">{error}</span>}
     </div>
   );

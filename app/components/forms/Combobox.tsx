@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Label from "./Label";
 
 type ComboboxProps = {
@@ -18,6 +18,7 @@ export default function ComboboxInput({
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [textInput, setTextInput] = useState("");
   const [highlightedItem, setHighlightedItem] = useState<number | null>(null);
+  const ref = useRef<HTMLUListElement | null>(null);
 
   const filtered = useMemo(
     () =>
@@ -65,6 +66,18 @@ export default function ComboboxInput({
     }
   }
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+
   return (
     <div className="relative w-full">
       <div className="flex flex-col">
@@ -92,34 +105,21 @@ export default function ComboboxInput({
             onClick={() => {
               setOpen((prev) => !prev);
             }}
-            className=""
+            className="cursor-pointer"
           >
             {isOpen ? "☝️" : "👇"}
           </span>
         </div>
       </div>
       {isOpen ? (
-        <ul className="absolute top-[110%] left-0 right-0 rounded-lg bg-amber-100/25 p-2">
-          {filtered.map((option, idx) => {
-            return (
-              <li
-                key={`${option}${idx}`}
-                className={`cursor-pointer ${
-                  idx === highlightedItem ? "bg-slate-600" : ""
-                }`}
-                onMouseEnter={() => {
-                  setHighlightedItem(idx);
-                }}
-                onClick={() => {
-                  setSelectedItem(option);
-                  setOpen(false);
-                }}
-              >
-                {option.toLowerCase()}
-              </li>
-            );
-          })}
-        </ul>
+        <ListBoxRef
+          ref={ref}
+          highlightedItem={highlightedItem}
+          items={filtered}
+          setHighlightedItem={setHighlightedItem}
+          setOpen={setOpen}
+          setSelectedItem={setSelectedItem}
+        />
       ) : null}
 
       {error ? <span className="text-red-600">{error}</span> : null}
@@ -138,3 +138,51 @@ function SelectedItem({ item }: { item: string }) {
     </div>
   );
 }
+
+type ListBoxProps = {
+  setOpen: React.Dispatch<boolean>;
+  items: Array<string>;
+  setHighlightedItem: React.Dispatch<number | null>;
+  setSelectedItem: React.Dispatch<string>;
+  highlightedItem: number | null;
+};
+
+const ListBoxRef = React.forwardRef<HTMLUListElement, ListBoxProps>(
+  function ListBox(
+    {
+      setOpen,
+      items,
+      setHighlightedItem,
+      setSelectedItem,
+      highlightedItem,
+    }: ListBoxProps,
+    ref
+  ) {
+    return (
+      <ul
+        ref={ref}
+        className="absolute top-[110%] left-0 right-0 z-10 max-h-28 overflow-y-scroll rounded-lg bg-gradient-to-tr from-amber-50 to-amber-100 p-2"
+      >
+        {items.map((option, idx) => {
+          return (
+            <li
+              key={`${option}${idx}`}
+              className={`cursor-pointer ${
+                idx === highlightedItem ? "bg-slate-600" : ""
+              }`}
+              onMouseEnter={() => {
+                setHighlightedItem(idx);
+              }}
+              onClick={() => {
+                setSelectedItem(option);
+                setOpen(false);
+              }}
+            >
+              {option.toLowerCase()}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+);
