@@ -60,7 +60,7 @@ export default function NewCategory() {
       <TextInput
         error={errors?.category}
         placeholder="Category name"
-        title="category"
+        name="category"
       />
       <NumberInput error={errors?.playerCount} title="player count" />
       <SubmitButton state={state}>Create category</SubmitButton>

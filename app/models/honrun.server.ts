@@ -52,7 +52,7 @@ export async function createHoNRun(
     where: { run: { slug: run.slug } },
   });
   if (existingRun) {
-    return existingRun;
+    return { run: existingRun, exists: true };
   }
   return prisma.hoNRun.create({
     data: {

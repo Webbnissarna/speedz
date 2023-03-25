@@ -5,6 +5,10 @@ export async function getHeroes() {
   return prisma.hoNHero.findMany();
 }
 
+export async function getHeroesByName(names: Array<string>) {
+  return prisma.hoNHero.findMany({ where: { name: { in: names } } });
+}
+
 export async function getHero(name: string) {
   return prisma.hoNHero.findUnique({ where: { name: name } });
 }

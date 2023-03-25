@@ -94,7 +94,7 @@ export const heroes = [
   { abbr: "tdl", name: "The Dark Lady" },
   { abbr: "tb", name: "Thunderbringer" },
   { abbr: "tort", name: "Torturer" },
-  { abbr: "tremb", name: "Tremble" },
+  { abbr: "tr", name: "Tremble" },
   { abbr: "t", name: "Tundra" },
   { abbr: "valk", name: "Valkyrie" },
   { abbr: "vindi", name: "Vindicator" },

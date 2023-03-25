@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import ComboboxMenu from "./ComboboxMenu";
 import Label from "./Label";
 
 type ComboboxProps = {
   options: Array<string>;
   defaultText: string;
   name: string;
-  error?: string;
+  error?: string | null;
+  setValue: (value: string) => void;
 };
 
 export default function ComboboxInput({
@@ -13,12 +15,15 @@ export default function ComboboxInput({
   options,
   name,
   error,
+  setValue,
 }: ComboboxProps) {
   const [isOpen, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [textInput, setTextInput] = useState("");
   const [highlightedItem, setHighlightedItem] = useState<number | null>(null);
+  const [active, setActive] = useState(false);
   const ref = useRef<HTMLUListElement | null>(null);
+  const toggleRef = useRef<HTMLSpanElement | null>(null);
 
   const filtered = useMemo(
     () =>
@@ -28,6 +33,10 @@ export default function ComboboxInput({
       }),
     [options, textInput]
   );
+
+  useEffect(() => {
+    setValue(selectedItem);
+  }, [selectedItem, setValue]);
 
   function handleKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
     switch (e.code) {
@@ -68,8 +77,13 @@ export default function ComboboxInput({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
+      // @ts-ignore
       if (ref.current && !ref.current.contains(event.target)) {
-        setOpen(false);
+        //@ts-ignore
+        if (!toggleRef.current?.contains(event.target)) {
+          console.log("close");
+          setOpen(false);
+        }
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -79,50 +93,65 @@ export default function ComboboxInput({
   }, [ref]);
 
   return (
-    <div className="relative w-full">
-      <div className="flex flex-col">
+    <div
+      className="relative w-full"
+      onFocus={() => {
+        setActive(true);
+        setOpen(true);
+      }}
+      onBlur={() => {
+        setActive(false);
+      }}
+    >
+      <div className="flex flex-col items-center">
         {selectedItem.length > 0 ? (
           <input readOnly hidden name={name} value={selectedItem} />
         ) : null}
 
-        <Label title={name} />
+        <Label title={name} active={active} />
         {selectedItem.length > 0 && <SelectedItem item={selectedItem} />}
-        <div className="flex w-full items-center justify-between border border-amber-600 bg-transparent bg-gradient-to-r from-amber-400/25 to-amber-600/25 py-4 px-4">
-          <input
-            type="text"
-            onChange={(e) => {
-              setTextInput(e.currentTarget.value);
-            }}
-            onKeyDown={handleKeyPress}
-            placeholder={defaultText}
-            onFocus={() => setOpen(true)}
-            onBlur={() => {
-              setHighlightedItem(null);
-            }}
-            className="placeholder:typo-body bg-transparent placeholder:text-amber-200/50"
-          />
-          <span
-            onClick={() => {
-              setOpen((prev) => !prev);
-            }}
-            className="cursor-pointer"
-          >
-            {isOpen ? "☝️" : "👇"}
-          </span>
+        <div className="relative w-full">
+          <div className="flex w-full items-center justify-between border border-amber-600 bg-transparent bg-gradient-to-r from-amber-400/25 to-amber-600/25 py-4 px-4">
+            <input
+              type="text"
+              onChange={(e) => {
+                setTextInput(e.currentTarget.value);
+              }}
+              onKeyDown={handleKeyPress}
+              placeholder={defaultText}
+              onBlur={() => {
+                setHighlightedItem(null);
+              }}
+              className="placeholder:typo-body w-full bg-transparent placeholder:text-amber-200/50"
+            />
+            <span
+              className={`cursor-pointer transition-transform duration-300 ${
+                isOpen && "rotate-180 transform"
+              }`}
+              onClick={() => {
+                setOpen(!isOpen);
+              }}
+              ref={toggleRef}
+            >
+              👇
+            </span>
+          </div>
+          {isOpen ? (
+            <ComboboxMenu
+              items={filtered}
+              ref={ref}
+              listItemClick={(item: string) => {
+                setSelectedItem(item);
+                setOpen(false);
+              }}
+            />
+          ) : null}
         </div>
       </div>
-      {isOpen ? (
-        <ListBoxRef
-          ref={ref}
-          highlightedItem={highlightedItem}
-          items={filtered}
-          setHighlightedItem={setHighlightedItem}
-          setOpen={setOpen}
-          setSelectedItem={setSelectedItem}
-        />
-      ) : null}
 
-      {error ? <span className="text-red-600">{error}</span> : null}
+      {error && selectedItem === "" ? (
+        <span className="text-red-600">{error}</span>
+      ) : null}
     </div>
   );
 }
@@ -130,59 +159,11 @@ export default function ComboboxInput({
 function SelectedItem({ item }: { item: string }) {
   return (
     <div className="flex gap-2 p-5">
-      <span>👉</span>
+      <span className="animate-scale">👌</span>
       <span className="truncate" title={item}>
         {item}
       </span>
-      <span>👌</span>
+      <span className="animate-scale">👌</span>
     </div>
   );
 }
-
-type ListBoxProps = {
-  setOpen: React.Dispatch<boolean>;
-  items: Array<string>;
-  setHighlightedItem: React.Dispatch<number | null>;
-  setSelectedItem: React.Dispatch<string>;
-  highlightedItem: number | null;
-};
-
-const ListBoxRef = React.forwardRef<HTMLUListElement, ListBoxProps>(
-  function ListBox(
-    {
-      setOpen,
-      items,
-      setHighlightedItem,
-      setSelectedItem,
-      highlightedItem,
-    }: ListBoxProps,
-    ref
-  ) {
-    return (
-      <ul
-        ref={ref}
-        className="absolute top-[110%] left-0 right-0 z-10 max-h-28 overflow-y-scroll rounded-lg bg-gradient-to-tr from-amber-50 to-amber-100 p-2"
-      >
-        {items.map((option, idx) => {
-          return (
-            <li
-              key={`${option}${idx}`}
-              className={`cursor-pointer ${
-                idx === highlightedItem ? "bg-slate-600" : ""
-              }`}
-              onMouseEnter={() => {
-                setHighlightedItem(idx);
-              }}
-              onClick={() => {
-                setSelectedItem(option);
-                setOpen(false);
-              }}
-            >
-              {option.toLowerCase()}
-            </li>
-          );
-        })}
-      </ul>
-    );
-  }
-);

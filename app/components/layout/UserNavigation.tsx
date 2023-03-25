@@ -11,7 +11,7 @@ export default function UserNavigation() {
       aria-label="user navigation"
     >
       {user ? (
-        <div className="absolute top-8 right-4 flex gap-2 md:static">
+        <div className="absolute top-8 right-4 flex gap-2 ">
           <Form action="/logout" method="post" tabIndex={-1}>
             <button
               name="logout"
@@ -21,7 +21,7 @@ export default function UserNavigation() {
               <LogOut />
             </button>
           </Form>
-          <RemixLink to="/account">
+          <RemixLink to="/account" className="hover:text-amber-200">
             <User />
           </RemixLink>
         </div>

@@ -33,7 +33,7 @@ export default function App() {
   return (
     <html
       lang="en"
-      className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-700 font-body text-amber-500"
+      className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-700 bg-cover font-body text-amber-500"
     >
       <head>
         <Meta />

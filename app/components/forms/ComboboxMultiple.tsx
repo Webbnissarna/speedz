@@ -1,20 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import ComboboxMenu from "./ComboboxMenu";
 import Label from "./Label";
+
+type Option = {
+  name: string;
+  abbr: string;
+};
 
 export default function ComboboxMultiple({
   options,
-  defaultText,
   name,
   placeholder,
   error,
   allowCreation = false,
+  maxSelectedItems,
 }: {
-  options: Array<string>;
+  options: Array<Option>;
   defaultText: string;
   name: string;
   placeholder: string;
   error: string | null | undefined;
   allowCreation?: boolean;
+  maxSelectedItems?: number;
 }) {
   function getFilteredOptions(
     selectedItems: Array<string>,
@@ -23,10 +30,14 @@ export default function ComboboxMultiple({
     const lowerCasedInputValue = inputValue.toLowerCase();
 
     return options.filter(function filterOption(option) {
-      return (
-        !selectedItems.includes(option) &&
-        option.toLowerCase().includes(lowerCasedInputValue)
-      );
+      const lowerCasedOption = option.name.toLowerCase();
+      if (
+        Object.values(selectedItems).includes(option.name) ||
+        !lowerCasedOption.includes(lowerCasedInputValue)
+      ) {
+        return false;
+      }
+      return true;
     });
   }
   const [isOpen, setOpen] = useState(false);
@@ -38,13 +49,14 @@ export default function ComboboxMultiple({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedItems, inputValue]
   );
+  const [active, setActive] = useState(false);
   const ref = useRef<HTMLUListElement | null>(null);
+  const toggleRef = useRef<HTMLSpanElement | null>(null);
 
   function handleKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
-    console.log(e.code);
-    e.preventDefault();
     switch (e.code) {
       case "ArrowDown":
+        e.preventDefault();
         if (highlightedItem !== null) {
           setHighlightedItem((highlightedItem + 1) % items.length);
         } else {
@@ -52,6 +64,7 @@ export default function ComboboxMultiple({
         }
         break;
       case "ArrowUp":
+        e.preventDefault();
         if (highlightedItem !== null) {
           if (highlightedItem === 0) {
             setHighlightedItem(null);
@@ -63,17 +76,23 @@ export default function ComboboxMultiple({
         }
         break;
       case "Enter":
+        e.preventDefault();
         if (highlightedItem !== null) {
-          setSelectedItems([...selectedItems, items[highlightedItem]]);
+          if (maxSelectedItems && selectedItems.length >= maxSelectedItems)
+            return;
+          setSelectedItems([...selectedItems, items[highlightedItem].name]);
           setOpen(false);
         }
         if (allowCreation && e.currentTarget.value.length > 0) {
+          if (maxSelectedItems && selectedItems.length >= maxSelectedItems)
+            return;
           setSelectedItems([...selectedItems, e.currentTarget.value]);
           setInputValue("");
           setOpen(false);
         }
         break;
       case "Escape":
+        e.preventDefault();
         setOpen(false);
         break;
       default:
@@ -83,8 +102,13 @@ export default function ComboboxMultiple({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
+      // @ts-ignore
       if (ref.current && !ref.current.contains(event.target)) {
-        setOpen(false);
+        //@ts-ignore
+        if (!toggleRef.current?.contains(event.target)) {
+          console.log("close");
+          setOpen(false);
+        }
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -94,9 +118,18 @@ export default function ComboboxMultiple({
   }, [ref]);
 
   return (
-    <div className="relative w-full">
+    <div
+      className="grid w-full gap-3"
+      onFocus={() => {
+        setActive(true);
+        setOpen(true);
+      }}
+      onBlur={() => {
+        setActive(false);
+      }}
+    >
       <div className="flex flex-col">
-        <Label title={name} />
+        <Label title={name} active={active} />
         {selectedItems.map((item, idx) => {
           return (
             <input
@@ -108,73 +141,93 @@ export default function ComboboxMultiple({
             />
           );
         })}
-        <div>
-          <div className="flex gap-3 py-2">
-            {selectedItems.map((item, idx) => {
-              return (
-                <div
-                  key={`${item}${idx}`}
-                  className="relative flex cursor-default gap-2 border border-amber-300 p-2"
-                >
-                  <span>{item}</span>
-                  <span
-                    className="absolute right-[-0.5rem] top-[-0.5rem] cursor-pointer"
-                    onClick={(e) => {
-                      setSelectedItems(
-                        selectedItems.filter(
-                          (selectedItem) => selectedItem !== item
-                        )
-                      );
-                    }}
-                  >
-                    🙅‍♂️
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-          <div className="flex w-full items-center justify-between border border-amber-600 bg-transparent bg-gradient-to-r from-amber-400/25 to-amber-600/25 py-4 px-4">
+        <div className={`relative `}>
+          <div
+            className={`flex w-full items-center justify-between border border-amber-600 bg-transparent bg-gradient-to-r from-amber-400/25 to-amber-600/25 py-4 px-4`}
+          >
             <input
               placeholder={placeholder}
               onChange={(e) => {
                 setInputValue(e.currentTarget.value);
+              }}
+              onClick={() => {
+                setOpen(true);
               }}
               value={inputValue}
               onKeyDown={handleKeyPress}
               onFocus={() => {
                 setOpen(true);
               }}
-              className="placeholder:typo-body bg-transparent placeholder:text-amber-200/50"
+              className="placeholder:typo-body w-full bg-transparent placeholder:text-amber-200/50"
             />
-            <span onClick={() => setOpen(!isOpen)} className="cursor-pointer">
-              {isOpen ? "☝️" : "👇"}
+            <span
+              className={`cursor-pointer select-none transition-transform duration-300 ${
+                isOpen && "rotate-180 transform"
+              }`}
+              onClick={() => {
+                setOpen(!isOpen);
+              }}
+              ref={toggleRef}
+            >
+              👇
             </span>
           </div>
+          {isOpen && items.length > 0 ? (
+            <ComboboxMenu
+              items={items.map((item) => item.name)}
+              listItemClick={(item: string) => {
+                if (
+                  maxSelectedItems &&
+                  selectedItems.length >= maxSelectedItems
+                ) {
+                  return;
+                }
+                setSelectedItems([...selectedItems, item]);
+                setOpen(false);
+              }}
+              ref={ref}
+            />
+          ) : null}
         </div>
       </div>
-      {isOpen ? (
-        <ul
-          ref={ref}
-          className="absolute top-[110%] left-0 right-0 max-h-28 overflow-y-scroll rounded-lg bg-amber-100/25 p-2"
-        >
-          {items.map((option, idx) => {
-            return (
-              <li
-                className={`cursor-pointer hover:bg-slate-600 ${
-                  idx === highlightedItem ? "bg-slate-600" : ""
-                }`}
-                key={`${option}${idx}`}
-                onClick={() => {
-                  setSelectedItems([...selectedItems, option]);
-                }}
-              >
-                {option}
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
-      {error && <span className="font-bold text-red-600">{error}</span>}
+      <SelectedItems
+        items={options.filter((option) => selectedItems.includes(option.name))}
+        onItemClick={(item) => {
+          setSelectedItems(
+            selectedItems.filter((selectedItem) => selectedItem !== item)
+          );
+        }}
+      />
+
+      {error && selectedItems.length !== maxSelectedItems && (
+        <span className=" text-red-600">{error}</span>
+      )}
+    </div>
+  );
+}
+
+function SelectedItems({
+  items,
+  onItemClick,
+}: {
+  items: Array<Option>;
+  onItemClick: (item: string) => void;
+}) {
+  return (
+    <div className="flex gap-3">
+      {items.map(({ name, abbr }, idx) => {
+        return (
+          <div
+            key={`${name}${idx}`}
+            className="relative flex h-16 w-16 cursor-pointer items-center justify-center gap-2 border border-amber-300 bg-slate-100/25 p-2 uppercase hover:bg-slate-100/50"
+            onClick={() => {
+              onItemClick(name);
+            }}
+          >
+            <span className="typo-abbr text-slate-200">{abbr}</span>
+          </div>
+        );
+      })}
     </div>
   );
 }

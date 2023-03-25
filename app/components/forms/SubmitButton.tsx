@@ -3,9 +3,14 @@ import React from "react";
 type SubmitButtonProps = {
   children: React.ReactNode;
   state: "submitting" | "idle" | "loading";
+  error?: string | null;
 };
 
-export default function SubmitButton({ children, state }: SubmitButtonProps) {
+export default function SubmitButton({
+  children,
+  state,
+  error,
+}: SubmitButtonProps) {
   return (
     <button
       type="submit"
@@ -13,6 +18,7 @@ export default function SubmitButton({ children, state }: SubmitButtonProps) {
       disabled={state === "submitting"}
     >
       <span>{children}</span>
+      {error ? <span className="text-red-600">{error}</span> : null}
     </button>
   );
 }

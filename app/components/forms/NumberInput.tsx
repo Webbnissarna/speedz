@@ -11,9 +11,14 @@ export default function NumberInput({
   defaultValue?: number;
 }) {
   const [value, setValue] = useState<number>(defaultValue);
+  const [active, setActive] = useState<boolean>(false);
   return (
-    <div>
-      <Label title={title} />
+    <div
+      className="w-full max-w-[350px]"
+      onFocus={() => setActive(true)}
+      onBlur={() => setActive(false)}
+    >
+      <Label title={title} active={active} />
       <input type={"hidden"} value={value} name={title} />
       <input
         onChange={(e) => {
@@ -28,7 +33,7 @@ export default function NumberInput({
           }
         }}
         id={title}
-        className="border border-amber-600 bg-transparent bg-gradient-to-r from-amber-400/25 to-amber-600/25 px-4 py-4"
+        className="w-full border border-amber-600 bg-transparent bg-gradient-to-r from-amber-400/25 to-amber-600/25 px-4 py-4"
       />
       {error && <span className="text-red-600">{error}</span>}
     </div>
