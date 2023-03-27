@@ -6,10 +6,7 @@ import Link from "../Link";
 export default function UserNavigation() {
   const user = useOptionalUser();
   return (
-    <nav
-      className="col-span-3 flex w-full justify-end md:col-span-1 md:p-4"
-      aria-label="user navigation"
-    >
+    <nav className="flex w-full justify-end" aria-label="user navigation">
       {user ? (
         <div className="absolute top-8 right-4 flex gap-2">
           <Form action="/logout" method="post" tabIndex={-1}>
