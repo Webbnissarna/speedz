@@ -95,7 +95,7 @@ export default function Join() {
   }, [actionData]);
 
   return (
-    <Layout header="Sign up" userNavigation={false}>
+    <Layout subheading={{ title: "Sign up" }} userNavigation={false}>
       <Layout.Content>
         <div className="flex w-full flex-col items-center justify-center">
           <Form

@@ -11,7 +11,7 @@ export default function UserNavigation() {
       aria-label="user navigation"
     >
       {user ? (
-        <div className="absolute top-8 right-4 flex gap-2 ">
+        <div className="absolute top-8 right-4 flex gap-2">
           <Form action="/logout" method="post" tabIndex={-1}>
             <button
               name="logout"
@@ -26,7 +26,7 @@ export default function UserNavigation() {
           </RemixLink>
         </div>
       ) : (
-        <div className="grid w-full grid-cols-2 gap-1 pt-8 md:gap-4 ">
+        <div className="absolute top-8 right-4 flex gap-2">
           <div className="col-span-1">
             <Link to="/join">Sign up</Link>
           </div>
