@@ -7,7 +7,7 @@ type BodyProps = {
 
 export default function Body({ children, header }: BodyProps) {
   return (
-    <div id="layout-body" className="grid grid-cols-6 pt-6">
+    <div id="layout-body" className="grid grid-cols-6">
       {children}
     </div>
   );
