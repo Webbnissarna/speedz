@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SVGProps } from "react";
-const SvgLogOut = (props: SVGProps<SVGSVGElement>) => (
+const SvgLogIn = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={24}
@@ -11,10 +11,10 @@ const SvgLogOut = (props: SVGProps<SVGSVGElement>) => (
     strokeWidth={2}
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="feather feather-log-out"
+    className="feather feather-log-in"
     {...props}
   >
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
   </svg>
 );
-export default SvgLogOut;
+export default SvgLogIn;

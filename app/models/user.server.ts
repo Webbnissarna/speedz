@@ -56,6 +56,24 @@ export async function getUsersByEmail(emails: Array<string>) {
   }
 }
 
+export async function getUsersByNameOrEmail(namesOrEmails: Array<string>) {
+  const userPromises = namesOrEmails.map(async (nameOrEmail) => {
+    return await prisma.user.findFirst({
+      where: {
+        OR: [{ name: nameOrEmail }, { email: nameOrEmail }],
+      },
+    });
+  });
+
+  try {
+    const users = await Promise.all(userPromises);
+    return users.filter((user): user is User => user !== null);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 export async function getUsers() {
   return prisma.user.findMany();
 }

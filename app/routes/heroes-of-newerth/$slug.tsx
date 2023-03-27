@@ -18,7 +18,7 @@ export default function RecordSlug() {
   const { HoNRun } = useLoaderData<typeof loader>();
   return (
     <div className="flex flex-col gap-5">
-      <h2 className="h2">{HoNRun.run.title}</h2>
+      <h2 className="typo-h2">{HoNRun.run.title}</h2>
       <p>Hero{HoNRun.HoNHeroes.length > 1 ? "es" : ""} used:</p>
       <div className="flex gap-3">
         {HoNRun.HoNHeroes.map((hero) => {
@@ -55,7 +55,7 @@ function HeroPortrait({ hero }: { hero: HoNHero }) {
   return (
     <Portrait>
       <img alt={hero.name} className="" />
-      <h3 className="truncate text-lg font-bold" title={hero.name}>
+      <h3 className="typo-h3 truncate" title={hero.name}>
         {hero.name}
       </h3>
     </Portrait>
@@ -66,7 +66,7 @@ function UserPortrait({ user }: { user: Pick<User, "email" | "name"> }) {
   return (
     <Portrait>
       <img alt={user.email} />
-      <h3 className="truncate text-lg font-bold" title={user.email}>
+      <h3 className="typo-h3 truncate" title={user.email}>
         {user.name ? user.name : user.email}
       </h3>
     </Portrait>

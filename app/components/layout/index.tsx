@@ -8,19 +8,22 @@ type LayoutProps = {
   children: React.ReactNode;
   header: string;
   userNavigation?: boolean;
+  game?: string;
 };
 
 export function Layout({
   children,
   header,
   userNavigation = true,
+  game,
 }: LayoutProps) {
   return (
-    <div className="p-2 md:p-0">
-      <div className="grid  grid-cols-3 items-center justify-center">
-        <h1 className="text-gradient col-span-3 flex h-[4rem] animate-gradient justify-center text-5xl md:col-span-1 md:col-start-2">
+    <div className="p-4 md:p-6" id="layout-container">
+      <div className="grid grid-cols-6 items-center justify-center">
+        <h1 className="typo-h1 col-span-6 text-center md:col-span-4 md:col-start-2">
           {header}
         </h1>
+        {game ? <h2 className="col-span-6 pt-4 text-center">{game}</h2> : null}
         {userNavigation && <UserNavigation />}
       </div>
       {children}

@@ -52,7 +52,7 @@ export async function createHoNRun(
     where: { run: { slug: run.slug } },
   });
   if (existingRun) {
-    return existingRun;
+    return { run: existingRun, exists: true };
   }
   return prisma.hoNRun.create({
     data: {
@@ -79,7 +79,10 @@ export async function createHoNRun(
         },
       },
       HoNHeroes: {
-        connect: heroes.map((hero) => ({ name: hero.name })),
+        connectOrCreate: heroes.map((hero) => ({
+          create: { name: hero.name },
+          where: { name: hero.name },
+        })),
       },
     },
   });

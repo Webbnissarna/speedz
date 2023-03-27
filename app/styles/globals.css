@@ -10,6 +10,20 @@
     margin: 0;
     -moz-appearance: textfield;
   }
+  span,
+  a,
+  p {
+    @apply typo-body;
+  }
+  h1 {
+    @apply typo-h1;
+  }
+  h2 {
+    @apply typo-h2;
+  }
+  h3 {
+    @apply typo-h3;
+  }
 }
 
 @layer components {
@@ -19,7 +33,42 @@
   .text-gradient-error {
     @apply bg-transparent bg-gradient-to-br from-red-600 to-red-400 bg-clip-text text-transparent;
   }
-  .h2 {
-    @apply text-gradient text-3xl;
+  .typo-h1 {
+    @apply text-gradient font-h1 text-[2rem] leading-[3rem] tracking-widest;
   }
+  .typo-h2 {
+    @apply text-gradient font-h2 text-2xl leading-[3rem] tracking-widest;
+  }
+  .typo-h3 {
+    @apply text-gradient font-body text-xl leading-8 tracking-wider;
+  }
+  .typo-body {
+    @apply font-body text-lg leading-6 tracking-tighter text-amber-500;
+  }
+  .typo-abbr {
+    @apply font-body text-xs leading-5 -tracking-widest text-amber-500;
+  }
+
+  .bg-gradient {
+    @apply bg-gradient-to-br from-slate-900 to-slate-700;
+  }
+}
+
+@font-face {
+  font-family: "Kodchasan-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/Kodchasan-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kodchasan-Medium";
+  font-style: normal;
+  font-weight: 500;
+  src: url("/fonts/Kodchasan-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kodchasan-SemiBold";
+  font-style: normal;
+  font-weight: 600;
+  src: url("/fonts/Kodchasan-SemiBold.woff2") format("woff2");
 }
