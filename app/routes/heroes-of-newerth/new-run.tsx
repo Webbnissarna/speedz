@@ -19,6 +19,7 @@ import { getCategoriesForGame } from "~/models/category.server";
 import { getHeroesByName } from "~/models/honhero.server";
 
 import { createHoNRun } from "~/models/honrun.server";
+import { getRunsForGame } from "~/models/run.server";
 
 import { getUsers, getUsersByNameOrEmail } from "~/models/user.server";
 import { heroes } from "~/static-data/heroes";
@@ -88,6 +89,8 @@ export const action = async ({ request }: ActionArgs) => {
 
   const heroes = await getHeroesByName(selectedHeroes);
 
+  const numberOfRuns = (await getRunsForGame("heroes of newerth")).length;
+
   console.log("creating run");
 
   const result = await createHoNRun(
@@ -95,7 +98,7 @@ export const action = async ({ request }: ActionArgs) => {
       title: formName,
       time: formTime,
       gameName: "heroes of newerth",
-      slug: formName.toLowerCase().replace(/ /g, "-"),
+      slug: `${formName.toLowerCase().replace(/ /g, "-")}-${numberOfRuns}`,
       note: formNotes?.toString() ?? null,
     },
     heroes,
