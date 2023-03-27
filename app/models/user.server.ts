@@ -5,6 +5,75 @@ import { prisma } from "~/db.server";
 
 export type { User } from "@prisma/client";
 
+/** Update user without allowing to overwrite someone elses mail/name */
+export async function updateUser(user: User) {
+  const errors: { email: string | null; name: string | null } = {
+    email: null,
+    name: null,
+  };
+  const existingUserEmail = await prisma.user.findUnique({
+    where: { email: user.email },
+  });
+  if (existingUserEmail && existingUserEmail.id !== user.id) {
+    errors.email = "Email already in use";
+  }
+  if (user.name) {
+    const existingUserName = await prisma.user.findUnique({
+      where: { name: user.name },
+    });
+    if (existingUserName && existingUserName.id !== user.id) {
+      errors.name = "Name already in use";
+      console.log("errors", errors);
+    }
+  }
+
+  const hasErrors = Object.values(errors).some((error) => error);
+
+  if (!hasErrors) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        email: user.email,
+        name: user.name,
+        updatedAt: new Date(),
+      },
+    });
+  }
+  return errors;
+}
+
+export async function getUsersByEmail(emails: Array<string>) {
+  const userPromises = emails.map(async (email) => {
+    return await prisma.user.findUnique({ where: { email: email } });
+  });
+
+  try {
+    const users = await Promise.all(userPromises);
+    return users.filter((user): user is User => user !== null);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function getUsersByNameOrEmail(namesOrEmails: Array<string>) {
+  const userPromises = namesOrEmails.map(async (nameOrEmail) => {
+    return await prisma.user.findFirst({
+      where: {
+        OR: [{ name: nameOrEmail }, { email: nameOrEmail }],
+      },
+    });
+  });
+
+  try {
+    const users = await Promise.all(userPromises);
+    return users.filter((user): user is User => user !== null);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 export async function getUsers() {
   return prisma.user.findMany();
 }

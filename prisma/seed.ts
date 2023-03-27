@@ -1,20 +1,34 @@
+import type { Category } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { createCategory } from "~/models/category.server";
+import { createGame } from "~/models/game.server";
+import { createHero } from "~/models/honhero.server";
+import { createHoNRun } from "~/models/honrun.server";
 
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "test@testson@mail.mail";
+  const email = "test@testson.mail";
 
   // cleanup the existing database
   await prisma.user.delete({ where: { email } }).catch(() => {
     // no worries if it doesn't exist yet
   });
 
-  const hashedPassword = await bcrypt.hash("tester", 10);
+  const hashedPassword = await bcrypt.hash("tester1234", 10);
 
-  const user = await prisma.user.create({
-    data: {
+  const user = await prisma.user.upsert({
+    where: { email: email },
+    create: {
+      email,
+      password: {
+        create: {
+          hash: hashedPassword,
+        },
+      },
+    },
+    update: {
       email,
       password: {
         create: {
@@ -24,69 +38,64 @@ async function seed() {
     },
   });
 
-  const categories = {
-    "2pal": "2 player all lanes",
-    "1pal": "1 player all lanes",
-    "1pol": "1 player one lane",
-  };
+  await createGame("Heroes of Newerth");
 
-  const records = [
+  const categoryNames = [
+    { numberOfPlayers: 2, name: "2 player all lanes" },
+    { numberOfPlayers: 1, name: "1 player all lanes" },
+    { numberOfPlayers: 1, name: "1 player one lane" },
+  ];
+
+  let categories: Array<Category> = [];
+  for (const categoryName of categoryNames) {
+    const category = await createCategory(
+      categoryName.name,
+      "Heroes of Newerth",
+      categoryName.numberOfPlayers
+    );
+    if (category) {
+      categories.push(category);
+    }
+  }
+
+  const heroes = [{ name: "Accursed" }, { name: "Aluna" }];
+
+  for (const hero of heroes) {
+    await createHero(hero);
+  }
+
+  const runs = [
     {
-      title: "Flinty boi does it",
-      category: categories["1pal"],
-      heroes: [{ name: "Flint" }],
+      title: "He does it",
+      category: categories[1],
+      heroes: [heroes[0]],
       time: "1:33:07",
       slug: "hon-1",
       users: [user.id],
     },
     {
-      title: "Flinty boi does it",
-      category: categories["1pol"],
-      heroes: [{ name: "Bomb" }],
+      title: "Hei does it again",
+      category: categories[2],
+      heroes: [heroes[1]],
       time: "1:33:07",
       slug: "hon-2",
       user: [user.id],
     },
   ];
 
-  for (const record of records) {
-    await prisma.record.upsert({
-      where: { slug: record.slug },
-      update: {
-        title: record.title,
-        category: record.category,
-        slug: record.slug,
-        time: record.time,
-        users: {
-          connect: { id: user.id },
-        },
-        heroes: {
-          connectOrCreate: record.heroes.map((hero) => {
-            return {
-              create: { name: hero.name },
-              where: { name: hero.name },
-            };
-          }),
-        },
+  for (const run of runs) {
+    await createHoNRun(
+      {
+        gameName: "Heroes of Newerth".toLowerCase(),
+        slug: run.slug,
+        time: run.time,
+        title: run.title,
+        note: null,
       },
-      create: {
-        title: record.title,
-        category: record.category,
-        slug: record.slug,
-        time: record.time,
-        users: {
-          connect: { id: user.id },
-        },
-        heroes: {
-          connectOrCreate: record.heroes.map((hero) => {
-            return {
-              create: { name: hero.name },
-              where: { name: hero.name },
-            };
-          }),
-        },
-      },
-    });
+      run.heroes,
+      [user],
+      run.category.id
+    );
   }
 
   console.log(`Database has been seeded. 🌱`);

@@ -7,30 +7,57 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Record {
-  title    String
-  category String
-  slug     String      @id
-  heroes   HoNHeroes[]
-  time     String
-  users    User[]
+model Game {
+  name       String     @id
+  categories Category[]
+  runs       Run[]
 }
 
-model HoNHeroes {
-  name    String   @id
-  Records Record[]
+model Category {
+  id           String @id @default(uuid())
+  name         String
+  game         Game   @relation(fields: [gameName], references: [name])
+  gameName     String
+  run          Run[]
+  nbrOfPlayers Int
+}
+
+model Run {
+  id         String   @id @unique @default(cuid())
+  slug       String   @unique
+  title      String
+  time       String
+  category   Category @relation(fields: [categoryId], references: [id])
+  note       String?
+  users      User[]
+  game       Game     @relation(fields: [gameName], references: [name])
+  HoNRun     HoNRun?
+  gameName   String
+  categoryId String
+}
+
+model HoNRun {
+  id        Int       @id @default(autoincrement())
+  HoNHeroes HoNHero[]
+  run       Run       @relation(fields: [runId], references: [id])
+  runId     String    @unique
+}
+
+model HoNHero {
+  name String   @id
+  runs HoNRun[]
 }
 
 model User {
-  id    String @id @default(cuid())
-  email String @unique
+  id    String  @id @default(cuid())
+  email String  @unique
+  name  String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   password Password?
-  notes    Note[]
-  records  Record[]
+  runs     Run[]
 }
 
 model Password {
@@ -38,16 +65,4 @@ model Password {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
-}
-
-model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
 }

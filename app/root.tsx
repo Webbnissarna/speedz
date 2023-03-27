@@ -31,12 +31,15 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function App() {
   return (
-    <html lang="en" className="h-full">
+    <html
+      lang="en"
+      className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-700 bg-cover font-body text-amber-500"
+    >
       <head>
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body>
         <Outlet />
         <ScrollRestoration />
         <Scripts />

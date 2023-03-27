@@ -3,6 +3,8 @@ import { useMemo } from "react";
 
 import type { User } from "~/models/user.server";
 
+import isEmail from "validator/lib/isEmail";
+
 const DEFAULT_REDIRECT = "/";
 
 /**
@@ -67,5 +69,10 @@ export function useUser(): User {
 }
 
 export function validateEmail(email: unknown): email is string {
-  return typeof email === "string" && email.length > 3 && email.includes("@");
+  if (typeof email === "string") {
+    return isEmail(email, {
+      domain_specific_validation: true,
+    });
+  }
+  return false;
 }
