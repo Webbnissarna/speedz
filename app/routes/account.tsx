@@ -17,7 +17,7 @@ export default function Index() {
   }
 
   return (
-    <Layout header={"Speedz"}>
+    <Layout>
       <Layout.Body header="Account">
         <Layout.Navigation
           links={[

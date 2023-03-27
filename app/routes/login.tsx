@@ -89,7 +89,7 @@ export default function LoginPage() {
   }, [actionData]);
 
   return (
-    <Layout header="Login" userNavigation={false}>
+    <Layout subheading={{ title: "Login" }} userNavigation={false}>
       <div className="mx-auto w-full max-w-md px-8">
         <Form method="post" className="flex flex-col justify-center space-y-6">
           <TextInput

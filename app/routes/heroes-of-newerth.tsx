@@ -3,7 +3,9 @@ import { Layout } from "~/components/layout";
 
 export default function HoNIndex() {
   return (
-    <Layout header="Speedz" game="Heroes of Newerth">
+    <Layout
+      subheading={{ title: "Heroes of Newerth", href: "heroes-of-newerth" }}
+    >
       <Layout.Body>
         <Layout.Content>
           <Outlet />
