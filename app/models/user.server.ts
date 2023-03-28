@@ -7,24 +7,14 @@ export type { User } from "@prisma/client";
 
 /** Update user without allowing to overwrite someone elses mail/name */
 export async function updateUser(user: User) {
-  const errors: { email: string | null; name: string | null } = {
-    email: null,
+  const errors: { name: string | null } = {
     name: null,
   };
-  const existingUserEmail = await prisma.user.findUnique({
-    where: { email: user.email },
+  const existingUsername = await prisma.user.findUnique({
+    where: { name: user.name },
   });
-  if (existingUserEmail && existingUserEmail.id !== user.id) {
-    errors.email = "Email already in use";
-  }
-  if (user.name) {
-    const existingUserName = await prisma.user.findUnique({
-      where: { name: user.name },
-    });
-    if (existingUserName && existingUserName.id !== user.id) {
-      errors.name = "Name already in use";
-      console.log("errors", errors);
-    }
+  if (existingUsername && existingUsername.id !== user.id) {
+    errors.name = "Name already in use";
   }
 
   const hasErrors = Object.values(errors).some((error) => error);
@@ -33,7 +23,6 @@ export async function updateUser(user: User) {
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        email: user.email,
         name: user.name,
         updatedAt: new Date(),
       },
@@ -42,25 +31,11 @@ export async function updateUser(user: User) {
   return errors;
 }
 
-export async function getUsersByEmail(emails: Array<string>) {
-  const userPromises = emails.map(async (email) => {
-    return await prisma.user.findUnique({ where: { email: email } });
-  });
-
-  try {
-    const users = await Promise.all(userPromises);
-    return users.filter((user): user is User => user !== null);
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
-
-export async function getUsersByNameOrEmail(namesOrEmails: Array<string>) {
-  const userPromises = namesOrEmails.map(async (nameOrEmail) => {
+export async function getUsersByName(names: Array<string>) {
+  const userPromises = names.map(async (name) => {
     return await prisma.user.findFirst({
       where: {
-        OR: [{ name: nameOrEmail }, { email: nameOrEmail }],
+        name: name,
       },
     });
   });
@@ -82,16 +57,16 @@ export async function getUserById(id: User["id"]) {
   return prisma.user.findUnique({ where: { id } });
 }
 
-export async function getUserByEmail(email: User["email"]) {
-  return prisma.user.findUnique({ where: { email } });
+export async function getUserByName(name: User["name"]) {
+  return prisma.user.findUnique({ where: { name } });
 }
 
-export async function createUser(email: User["email"], password: string) {
+export async function createUser(name: User["name"], password: string) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   return prisma.user.create({
     data: {
-      email,
+      name,
       password: {
         create: {
           hash: hashedPassword,
@@ -101,16 +76,16 @@ export async function createUser(email: User["email"], password: string) {
   });
 }
 
-export async function deleteUserByEmail(email: User["email"]) {
-  return prisma.user.delete({ where: { email } });
+export async function deleteUserByName(name: User["name"]) {
+  return prisma.user.delete({ where: { name } });
 }
 
 export async function verifyLogin(
-  email: User["email"],
+  name: User["name"],
   password: Password["hash"]
 ) {
   const userWithPassword = await prisma.user.findUnique({
-    where: { email },
+    where: { name },
     include: {
       password: true,
     },

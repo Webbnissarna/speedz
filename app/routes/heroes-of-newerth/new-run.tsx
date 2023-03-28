@@ -21,7 +21,7 @@ import { getHeroesByName } from "~/models/honhero.server";
 import { createHoNRun } from "~/models/honrun.server";
 import { getRunsForGame } from "~/models/run.server";
 
-import { getUsers, getUsersByNameOrEmail } from "~/models/user.server";
+import { getUsers, getUsersByName } from "~/models/user.server";
 import { heroes } from "~/static-data/heroes";
 
 export const action = async ({ request }: ActionArgs) => {
@@ -80,7 +80,7 @@ export const action = async ({ request }: ActionArgs) => {
     "Time must be a string"
   );
 
-  const users = await getUsersByNameOrEmail(selectedUsers);
+  const users = await getUsersByName(selectedUsers);
 
   invariant(
     users && users.length > 0 && users.length === category.nbrOfPlayers,
@@ -181,9 +181,9 @@ export default function NewHoNRun() {
         defaultText="User name"
         name="users"
         options={users.map((user) => {
-          const abbr = user.name?.at(0) ?? user.email[0];
+          const abbr = user.name.at(0) ?? "";
           return {
-            name: user.name ?? user.email,
+            name: user.name,
             abbr: abbr,
           };
         })}

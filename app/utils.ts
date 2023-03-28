@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import type { User } from "~/models/user.server";
 
 import isEmail from "validator/lib/isEmail";
+import isAlphanumeric from "validator/lib/isAlphanumeric";
 
 const DEFAULT_REDIRECT = "/";
 
@@ -47,7 +48,7 @@ export function useMatchesData(
 }
 
 function isUser(user: any): user is User {
-  return user && typeof user === "object" && typeof user.email === "string";
+  return user && typeof user === "object" && typeof user.name === "string";
 }
 
 export function useOptionalUser(): User | undefined {
@@ -73,6 +74,13 @@ export function validateEmail(email: unknown): email is string {
     return isEmail(email, {
       domain_specific_validation: true,
     });
+  }
+  return false;
+}
+
+export function validateUsername(name: unknown): name is string {
+  if (typeof name === "string") {
+    return isAlphanumeric(name, "en-US", { ignore: "_" });
   }
   return false;
 }
