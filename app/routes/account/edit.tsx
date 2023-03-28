@@ -22,7 +22,6 @@ export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData();
 
   const name = formData.get("name");
-  const email = formData.get("email");
 
   if (!user) {
     return;
@@ -30,7 +29,6 @@ export const action = async ({ request }: ActionArgs) => {
 
   const errors = await updateUser({
     id: user.id,
-    email: email && email.toString().length > 0 ? email.toString() : user.email,
     name: name && name.toString().length > 0 ? name.toString() : user.name,
     createdAt: user.createdAt,
     updatedAt: new Date(),
@@ -54,7 +52,6 @@ export default function Edit() {
         name="name"
         placeholder={user.name ? user.name : "Set a name"}
       />
-      <TextInput error={errors?.email} name="email" placeholder={user.email} />
       <SubmitButton state={state}>Update</SubmitButton>
     </Form>
   );

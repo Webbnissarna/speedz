@@ -28,7 +28,7 @@ export default function RecordSlug() {
       <p>Played by player{HoNRun.run.users.length > 1 ? "s" : ""}</p>
       <div>
         {HoNRun.run.users.map((user) => {
-          return <UserPortrait key={user.email} user={user} />;
+          return <UserPortrait key={user.id} user={user} />;
         })}
       </div>
       <div>
@@ -62,12 +62,12 @@ function HeroPortrait({ hero }: { hero: HoNHero }) {
   );
 }
 
-function UserPortrait({ user }: { user: Pick<User, "email" | "name"> }) {
+function UserPortrait({ user }: { user: Pick<User, "name"> }) {
   return (
     <Portrait>
-      <img alt={user.email} />
-      <h3 className="typo-h3 truncate" title={user.email}>
-        {user.name ? user.name : user.email}
+      <img alt={user.name} />
+      <h3 className="typo-h3 truncate" title={user.name}>
+        {user.name}
       </h3>
     </Portrait>
   );
