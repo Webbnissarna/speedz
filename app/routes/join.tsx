@@ -10,8 +10,8 @@ import * as React from "react";
 
 import { getUserId, createUserSession } from "~/session.server";
 
-import { createUser, getUserByEmail } from "~/models/user.server";
-import { safeRedirect, validateEmail } from "~/utils";
+import { createUser, getUserByName } from "~/models/user.server";
+import { safeRedirect, validateUsername } from "~/utils";
 import TextInput from "~/components/forms/TextInput";
 import SubmitButton from "~/components/forms/SubmitButton";
 import { Layout } from "~/components/layout";
@@ -25,37 +25,37 @@ export async function loader({ request }: LoaderArgs) {
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
-  const email = formData.get("email");
+  const name = formData.get("name");
   const password = formData.get("password");
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
-  if (!validateEmail(email)) {
+  if (!validateUsername(name)) {
     return json(
-      { errors: { email: "Email is invalid", password: null } },
+      { errors: { name: "Name is invalid", password: null } },
       { status: 400 }
     );
   }
 
   if (typeof password !== "string" || password.length === 0) {
     return json(
-      { errors: { email: null, password: "Password is required" } },
+      { errors: { name: null, password: "Password is required" } },
       { status: 400 }
     );
   }
 
   if (password.length < 8) {
     return json(
-      { errors: { email: null, password: "Password is too short" } },
+      { errors: { name: null, password: "Password is too short" } },
       { status: 400 }
     );
   }
 
-  const existingUser = await getUserByEmail(email);
+  const existingUser = await getUserByName(name);
   if (existingUser) {
     return json(
       {
         errors: {
-          email: "A user already exists with this email",
+          name: "A user already exists with this email",
           password: null,
         },
       },
@@ -63,7 +63,7 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  const user = await createUser(email, password);
+  const user = await createUser(name, password);
 
   return createUserSession({
     request,
@@ -87,7 +87,7 @@ export default function Join() {
   const passwordRef = React.useRef<HTMLInputElement>(null);
   const { state } = useNavigation();
   React.useEffect(() => {
-    if (actionData?.errors?.email) {
+    if (actionData?.errors?.name) {
       emailRef.current?.focus();
     } else if (actionData?.errors?.password) {
       passwordRef.current?.focus();
@@ -103,9 +103,9 @@ export default function Join() {
             className="flex flex-col justify-center space-y-6"
           >
             <TextInput
-              name="email"
-              placeholder="email@email.com"
-              error={actionData?.errors?.email}
+              name="name"
+              placeholder="Username"
+              error={actionData?.errors?.name}
               required
               autoFocus
             />

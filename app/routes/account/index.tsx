@@ -14,7 +14,6 @@ export default function Index() {
   return (
     <div className="flex flex-col gap-4">
       <span>{user && user.name}</span>
-      <span>{user && user.email}</span>
       <span>{user && user.createdAt}</span>
       <span>{user && user.updatedAt}</span>
     </div>

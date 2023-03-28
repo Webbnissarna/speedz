@@ -9,19 +9,19 @@ import { createHoNRun } from "~/models/honrun.server";
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "test@testson.mail";
+  const username = "tester";
 
   // cleanup the existing database
-  await prisma.user.delete({ where: { email } }).catch(() => {
+  await prisma.user.delete({ where: { name: username } }).catch(() => {
     // no worries if it doesn't exist yet
   });
 
   const hashedPassword = await bcrypt.hash("tester1234", 10);
 
   const user = await prisma.user.upsert({
-    where: { email: email },
+    where: { name: username },
     create: {
-      email,
+      name: username,
       password: {
         create: {
           hash: hashedPassword,
@@ -29,7 +29,7 @@ async function seed() {
       },
     },
     update: {
-      email,
+      name: username,
       password: {
         create: {
           hash: hashedPassword,

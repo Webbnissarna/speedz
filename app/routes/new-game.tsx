@@ -14,7 +14,7 @@ type Props = {};
 export const loader = async ({ request }: ActionArgs) => {
   const user = await getUser(request);
   console.log(process.env.SUPER_USER);
-  if (!user || user.email !== process.env.SUPER_USER) {
+  if (!user || user.name !== process.env.SUPER_USER) {
     console.log("thrown");
     throw new Response("Not found", { status: 404 });
   }
